@@ -168,7 +168,7 @@ const UserProfile = () => {
       <div className="max-w-4xl mx-auto px-4">
         <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
           {/* Profile Header */}
-          <div className="bg-blue-500 px-6 py-8">
+          <div className="bg-indigo-600 px-6 py-8">
             <div className="flex items-center">
               <div className="relative">
                 <div className="w-24 h-24 rounded-full bg-white flex items-center justify-center">
@@ -221,7 +221,7 @@ const UserProfile = () => {
                         value={user.fullName}
                         onChange={handleInfoChange}
                         disabled={!isEditing}
-                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-blue-500 disabled:bg-gray-100"
+                        className="mt-1 block w-full rounded-md bg-white border border-gray-300 px-3 py-2 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-blue-500 disabled:bg-gray-100"
                       />
                     </div>
 
@@ -236,7 +236,7 @@ const UserProfile = () => {
                         value={user.email}
                         onChange={handleInfoChange}
                         disabled={!isEditing}
-                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-blue-500 disabled:bg-gray-100"
+                        className="mt-1 block w-full  bg-white rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-blue-500 disabled:bg-gray-100"
                       />
                     </div>
 
@@ -251,7 +251,7 @@ const UserProfile = () => {
                         value={user.phone}
                         onChange={handleInfoChange}
                         disabled={!isEditing}
-                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-blue-500 disabled:bg-gray-100"
+                        className="mt-1 block w-full rounded-md  bg-white border border-gray-300 px-3 py-2 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-blue-500 disabled:bg-gray-100"
                       />
                     </div>
                   </div>
@@ -267,7 +267,7 @@ const UserProfile = () => {
                         name="age"
                         value={workout.age || ''} // Assuming user.age exists
                         disabled={!isEditing}
-                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 bg-gray-100"
+                        className="mt-1 block w-full  bg-white rounded-md border border-gray-300 px-3 py-2 text-gray-900 bg-gray-100"
                       />
                     </div>
 
@@ -298,7 +298,7 @@ const UserProfile = () => {
                           value={workout.weight || ''}
                           onChange={handleInfoChange}
                           disabled={!isEditing}
-                          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-blue-500 disabled:bg-gray-100"
+                          className="mt-1 block w-full  bg-white rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-blue-500 disabled:bg-gray-100"
                         />
                       </div>
 
@@ -313,7 +313,7 @@ const UserProfile = () => {
                           value={workout.height || ''}
                           onChange={handleInfoChange}
                           disabled={!isEditing}
-                          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-blue-500 disabled:bg-gray-100"
+                          className="mt-1 block w-full  bg-white rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-blue-500 disabled:bg-gray-100"
                         />
                       </div>
                     </div>
@@ -324,7 +324,7 @@ const UserProfile = () => {
                   <div className="flex justify-end mt-6">
                     <button
                       type="submit"
-                      className="bg-blue-500 text-white px-4 py-2 rounded-md shadow-lg hover:bg-blue-600"
+                      className="bg-indigo-600 text-white px-4 py-2 rounded-md shadow-lg hover:bg-indigo-600"
                     >
                       <Save className="w-4 h-4 mr-2" />
                       Save Changes

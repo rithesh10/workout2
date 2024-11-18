@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { X } from 'lucide-react';
 import { useNavigate } from "react-router-dom"; // Import useNavigate
-
+const url=import.meta.env.VITE_BACKEND_URL
 const LoginModal = ({ closeModal }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -16,7 +16,7 @@ const LoginModal = ({ closeModal }) => {
       setError(''); // Clear previous errors
 
       // Send login request
-      const response = await axios.post('http://localhost:4000/api/v1/user/login', 
+      const response = await axios.post(`${url}/login`, 
         {
           email,
           password

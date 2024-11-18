@@ -5,8 +5,9 @@ import { X, Menu } from 'lucide-react';
 // import RegisterModal from './RegisterModal';
 import LoginModal from './Login.jsx';
 import RegisterModal from './RegisterModal.jsx';
-
+const url=import.meta.env.VITE_BACKEND_URL
 const LandingPage = () => {
+  console.log(import.meta.env.VITE_BACKEND_URL);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);

@@ -11,7 +11,7 @@ async function ExerciseFunction(ex) {
   // Ensure 'ex' is an array, if not, just skip the function and return
   if (!Array.isArray(ex)) {
     console.error("Expected an array for 'ex', but received:", typeof ex);
-    return 0; // Skip processing if 'ex' is not an array
+    return ; // Skip processing if 'ex' is not an array
   }
 
   try {

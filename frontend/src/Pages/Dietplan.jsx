@@ -36,6 +36,7 @@ export default function DietPlan() {
       setDietPlan(response.data.data);
     } catch (err) {
       setError('Failed to generate diet plan. Please try again.');
+      console.log(err);
     } finally {
       setIsLoading(false);
     }

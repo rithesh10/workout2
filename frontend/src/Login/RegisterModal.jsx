@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { X, ChevronDown } from "lucide-react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+const url=import.meta.env.VITE_BACKEND_URL
 const RegisterModal = ({ closeModal }) => {
   const navigate = useNavigate();
   const [selectedCountry, setSelectedCountry] = useState({
@@ -70,7 +70,7 @@ const RegisterModal = ({ closeModal }) => {
 
     try {
       const response = await axios.post(
-        "http://localhost:4000/api/v1/user/register",
+        `${url}/register`,
         updatedFormdata,
         {
           headers: {
