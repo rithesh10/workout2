@@ -1,0 +1,25 @@
+# Common ignores
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Flask-specific ignores
+flask/__pycache__/
+flask/*.py[cod]
+flask/env/
+flask/venv/
+flask/*.sqlite3
+flask/.env
+
+# Node.js backend-specific ignores
+backend/node_modules/
+backend/logs/
+backend/*.log
+backend/.env
+
+# Frontend-specific ignores
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+frontend/.env

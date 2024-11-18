@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Gym Trainer</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap");
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background: linear-gradient(
+          135deg,
+          #000428,
+          #004e92
+        );
+        color: #fff;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      .navbar {
+        background-color: rgba(0, 0, 0, 0.8);
+        padding: 15px 0;
+      }
+      .navbar-brand {
+        font-weight: 600;
+        font-size: 1.75em;
+        color: #00c6ff;
+      }
+      .nav-link {
+        color: #fff !important;
+        transition: color 0.3s ease;
+      }
+      .nav-link:hover {
+        color: #00c6ff !important;
+      }
+      .container {
+        margin-top: 50px;
+      }
+      h1, h3 {
+        color: #f0f0f0;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .exercise-list {
+        list-style: none;
+        padding: 0;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+      }
+      .exercise-card {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+        padding: 20px;
+        border-radius: 15px;
+        text-align: center;
+        font-size: 1.2em;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        width: 200px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      .exercise-card:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+        transform: translateY(-5px) scale(1.05);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+      }
+      .exercise-icon {
+        font-size: 2em;
+        margin-bottom: 10px;
+      }
+      @keyframes fadeIn {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .fade-in {
+        animation: fadeIn 0.5s ease-out forwards;
+      }
+      @media (max-width: 768px) {
+        .container {
+          padding: 0 20px;
+        }
+        h1 {
+          font-size: 1.5em;
+        }
+        h3 {
+          font-size: 1.2em;
+        }
+        .exercise-card {
+          width: 150px;
+          font-size: 1em;
+          padding: 15px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#" onclick="navigateTo('home')">AI Gym Trainer</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <!-- <a class="nav-link active" href="#" onclick="navigateTo('home')">Home</a>
+            </li> -->
+            <!-- <li class="nav-item">
+              <a class="nav-link" href="/exercise" onclick="navigateTo('exercises')">Exercises</a>
+            </li> -->
+            <!-- <li class="nav-item">
+              <a class="nav-link" href="#" onclick="navigateTo('about')">About</a>
+            </li> -->
+            <!-- <li class="nav-item">
+              <a class="nav-link" href="#" onclick="navigateTo('contact')">Contact</a>
+            </li> -->
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Content -->
+    <div id="content" class="container text-center">
+      <!-- Content will be dynamically loaded here -->
+    </div>
+
+    <script>
+      const exercises = [
+        { name: 'Right Arm Bicep Curl', icon: 'fas fa-dumbbell', id: 'right-arm-bicep-curl' },
+        { name: 'Left Arm Bicep Curl', icon: 'fas fa-dumbbell', id: 'left-arm-bicep-curl' },
+        { name: 'Push-ups', icon: 'fas fa-child', id: 'push-ups' },
+        { name: 'Squats', icon: 'fas fa-walking', id: 'squats' },
+        { name: 'Plank', icon: 'fas fa-balance-scale', id: 'plank' },
+        { name: 'Lunges', icon: 'fas fa-running', id: 'lunges' },
+        { name: 'Mountain Climbers', icon: 'fas fa-running', id: 'mountain_climbers' },
+        { name: 'Russian Twists', icon: 'fas fa-running', id: 'russian_twists' },
+        { name: 'Crunches', icon: 'fas fa-running', id: 'crunches' },
+        { name: 'Wall Sit', icon: 'fas fa-chair', id: 'wall_sit' }
+      ];
+
+ function navigateTo(page) {
+  const content = document.getElementById("content");
+  content.innerHTML = ""; // Clear existing content
+
+  switch (page) {
+    case "home":
+      content.innerHTML = `
+        <h3 class="fade-in" style="animation-delay: 0.2s;">Select an Exercise:</h3>
+        <ul class="exercise-list">
+          ${exercises.map((exercise, index) => `
+            <li class="exercise-card" style="animation-delay: ${0.2 + index * 0.1}s;" onclick="startExercise('${exercise.id}')">
+              <i class="${exercise.icon} exercise-icon"></i>
+              ${exercise.name}
+            </li>
+          `).join('')}
+        </ul>
+      `;
+      // Trigger reflow to ensure animations play
+      void content.offsetWidth;
+      document.querySelectorAll('.exercise-card').forEach(card => {
+        card.classList.add('fade-in');
+      });
+      break;
+    case "exercises":
+      content.innerHTML = `
+        <h3 class="fade-in" style="animation-delay: 0.2s;">Select an Exercise to Begin:</h3>
+        <ul class="exercise-list">
+          ${exercises.map((exercise, index) => `
+            <li class="exercise-card" style="animation-delay: ${0.2 + index * 0.1}s;" onclick="startExercise('${exercise.id}')">
+              <i class="${exercise.icon} exercise-icon"></i>
+              ${exercise.name}
+            </li>
+          `).join('')}
+        </ul>
+      `;
+      // Trigger reflow to ensure animations play
+      void content.offsetWidth;
+      document.querySelectorAll('.exercise-card').forEach(card => {
+        card.classList.add('fade-in');
+      });
+      break;
+    case "about":
+      content.innerHTML = '<h1 class="fade-in">About Us</h1><p class="fade-in" style="animation-delay: 0.2s;">Learn more about AI Gym Trainer and our mission.</p>';
+      break;
+    case "contact":
+      content.innerHTML = '<h1 class="fade-in">Contact Us</h1><p class="fade-in" style="animation-delay: 0.2s;">Get in touch with our team for any questions or support.</p>';
+      break;
+    default:
+      content.innerHTML = '<h1 class="fade-in">Page Not Found</h1>';
+  }
+}
+
+
+      function startExercise(exercise) {
+        window.location.href = "/index?exercise=" + exercise;
+      }
+
+      // Load home page by default
+      navigateTo("home");
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
