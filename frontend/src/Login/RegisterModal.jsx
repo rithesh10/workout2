@@ -214,7 +214,7 @@ const RegisterModal = ({ closeModal }) => {
 
           <button
             type="submit"
-            className="w-full py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2"
+            className="w-full py-2 bg-black text-white rounded-md hover:bg-black transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2"
           >
             Create Account
           </button>

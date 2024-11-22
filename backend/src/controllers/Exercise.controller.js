@@ -124,15 +124,16 @@ async function filterExercises(exercises) {
   return filtered;
 }
 const getExerciseData=asyncHandler(async(req,res)=>{
-  const {exerciseName}=req.body;
+  // const {exerciseName}=req.body;
   // console.log(exerciseName)
-  const exerciseData=await Exercise.find({name:exerciseName})
+  const exerciseData=await Exercise.find({})
+  // console.log(exerciseData)
   // console.log(exerciseData)
   if(!exerciseData)
   {
     throw new ApiError(404,"Exercise not found");
   }
-  return res.status(500).json(new ApiSuccess(200,exerciseData))
+  return res.status(200).json(new ApiSuccess(200,exerciseData))
 
 
 })

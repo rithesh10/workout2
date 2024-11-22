@@ -25,25 +25,25 @@ const LandingPage = () => {
   return (
     <div className="min-h-screen w-screen overflow-x-hidden bg-gray-50">
       {/* Navigation */}
-      <nav className="w-full bg-white shadow-lg fixed top-0 z-50">
+      <nav className="w-full bg-black shadow-lg fixed top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <span className="ml-2 text-xl font-bold text-gray-800">FitFlow</span>
+              <span className="ml-2 text-xl font-bold text-white">FitFlow</span>
             </div>
 
             <div className="hidden md:flex items-center space-x-4">
-              <a href="#features" className="text-gray-600 hover:text-blue-600">Features</a>
-              <a href="#pricing" className="text-gray-600 hover:text-blue-600">Pricing</a>
+              <a href="#features" className="text-white hover:text-blue-600">Features</a>
+              <a href="#pricing" className="text-white hover:text-blue-600">Pricing</a>
               <button 
                 onClick={toggleLogin}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                className="px-4 py-2 bg-white text-black rounded-lg hover:bg-black "
               >
                 Login
               </button>
               <button 
                 onClick={toggleRegister}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                className="px-4 py-2 bg-white text-black rounded-lg hover:bg-black"
               >
                 Register
               </button>
@@ -60,12 +60,12 @@ const LandingPage = () => {
         {isMenuOpen && (
           <div className="md:hidden absolute w-full bg-white shadow-lg">
             <div className="px-2 pt-2 pb-3 space-y-1">
-              <a href="#features" className="block px-3 py-2 text-gray-600 hover:text-blue-600">Features</a>
-              <a href="#pricing" className="block px-3 py-2 text-gray-600 hover:text-blue-600">Pricing</a>
-              <button onClick={toggleLogin} className="block w-full text-left px-3 py-2 text-gray-600 hover:text-blue-600">
+              <a href="#features" className="block px-3 py-2 text-gray-600 hover:text-black">Features</a>
+              <a href="#pricing" className="block px-3 py-2 text-gray-600 hover:text-black">Pricing</a>
+              <button onClick={toggleLogin} className="block w-full  px-3 py-2 bg-black text-white text-gray-600 hover:black">
                 Login
               </button>
-              <button onClick={toggleRegister} className="block w-full px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+              <button onClick={toggleRegister} className="block w-full px-3 py-2 bg-black text-white rounded-lg hover:bg-black">
                 Register
               </button>
             </div>
@@ -88,7 +88,7 @@ const LandingPage = () => {
               <div className="mt-5 sm:mt-8 sm:flex sm:justify-center">
                 <button
                   onClick={toggleRegister}
-                  className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 md:py-4 md:text-lg md:px-10"
+                  className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-black hover:bg-black md:py-4 md:text-lg md:px-10"
                 >
                   Get Started
                 </button>

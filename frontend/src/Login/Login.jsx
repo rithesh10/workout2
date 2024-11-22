@@ -62,12 +62,12 @@ const LoginModal = ({ closeModal }) => {
           <input 
             type="password" 
             placeholder="Password" 
-            className="w-full rounded-md bg-white border-2 p-2" 
+            className="w-full rounded-md bg-white border-2   p-2" 
             value={password} 
             onChange={(e) => setPassword(e.target.value)} 
           />
           {error && <p className="text-red-500">{error}</p>}
-          <button type="submit" className="w-full py-2 bg-blue-600 text-white rounded-md">Log In</button>
+          <button type="submit" className="w-full py-2 bg-black text-white rounded-md">Log In</button>
         </form>
       </div>
     </div>

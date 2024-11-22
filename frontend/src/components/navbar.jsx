@@ -13,6 +13,8 @@ export default function Navbar() {
       console.log(response.data);
       // Redirect to the login page after successful logout
       window.history.replaceState(null, '', '/');
+      document.cookie = "accessToken=; Max-Age=0; path=/";
+      document.cookie = "refreshToken=; Max-Age=0; path=/";
       navigate('/login');
     } catch (error) {
       console.log(error);
@@ -22,7 +24,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-indigo-600 text-white shadow-lg">
+    <nav className="bg-black text-white shadow-lg">
       <div className="container mx-auto px-6 sm:px-8 lg:px-10 py-4">
         <div className="flex items-center justify-between">
           {/* Logo and Brand Name */}
@@ -33,14 +35,14 @@ export default function Navbar() {
 
           {/* Navigation Links */}
           <div className="flex no-underline items-center space-x-6">
-            <NavLink to="/workout" icon={<Dumbbell />} text="Workout" />
+            <NavLink to="/getWorkoutPlan" icon={<Dumbbell />} text="Workout" />
             <NavLink to="/diet" icon={<Apple />} text="Diet" />
             <NavLink to="/profile" icon={<User />} text="Profile" />
 
             {/* Logout Button */}
             <button
               onClick={handleLogout}
-              className="flex items-center space-x-2 text-gray-200 hover:text-gray-300 rounded-md px-3 py-2 bg-indigo-600"
+              className="flex items-center space-x-2 text-black hover:text-gray-300 rounded-md px-3 py-2 bg-white"
             >
               <LogOut className="h-5 w-5" />
               <span>Logout</span>

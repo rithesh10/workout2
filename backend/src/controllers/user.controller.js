@@ -5,10 +5,17 @@ import { ApiSuccess } from "../utils/ApiSuccess.js";
 import { uploadCloudinary } from "../utils/cloudinary.js";
 import { promises as fs } from "fs";
 import jwt from "jsonwebtoken";
+// const options = {
+//   httpOnly: true,
+//   secure: true,
+// };
 const options = {
   httpOnly: true,
-  secure: true,
+  secure: false, // In development, no HTTPS
+  sameSite: 'lax', // Allows same-site requests, suitable for development
+  path: '/', // Ensure this matches how the cookie was originally set
 };
+
 const generateAccessAndRefreshToken = async (userID) => {
   try {
     const user = await User.findById(userID);
@@ -159,7 +166,7 @@ const logout = asyncHandler(async (req, res) => {
   );
   return res
     .status(200)
-    .clearCookie("acceessToken", options)
+    .clearCookie("accessToken", options)
     .clearCookie("refreshToken", options)
     .json(new ApiSuccess(200, {}, "User logged out successfully"));
 });
@@ -256,6 +263,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 // });
 const updateUserDetails = asyncHandler(async (req, res) => {
   const { fullName, email, phone } = req.body;
+  console.log(fullName)
   if (!fullName || !email || !phone) {
     throw new ApiError("fullname,email,phone required");
   }
@@ -272,6 +280,7 @@ const updateUserDetails = asyncHandler(async (req, res) => {
       new: true,
     },
   );
+  console.log("Successfully updated the user info");
   return res
     .status(200)
     .json(new ApiSuccess(200, user, "Successfully updated user details"));

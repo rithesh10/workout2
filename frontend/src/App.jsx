@@ -11,6 +11,10 @@ import WorkoutPlan from "./Pages/Workoutplan";
 import Home from "./Pages/Home";
 import ExerciseTracker from "./Pages/ExerciseTracker";
 import UserProfile from "./Pages/UserProfile";
+import NavbarWorkout from "./workout/navbar";
+import JoinWorkout from "./workout/join";
+import WorkoutPage from "./workout/GetWorkoutPlan";
+import ExerciseDetail from "./workout/Exercise";
 
 
 const App = () => {
@@ -30,6 +34,10 @@ const App = () => {
           <Route path="/home" element={<Home/>}/>
           <Route path="/exerciseTracker" element={<ExerciseTracker/>}/>
           <Route path="/profile" element={<UserProfile/>}/>
+          {/* <Route path="/navbarWorkout" element={<NavbarWorkout/>}/> */}
+          {/* <Route path="/joinWorkout" element={<JoinWorkout/>}/> */}
+          <Route path="/getWorkoutPlan" element={<WorkoutPage/>}/>
+          <Route path="/getExercise" element={<ExerciseDetail/>}/>
         </Routes>
       </BrowserRouter>
     </div>
