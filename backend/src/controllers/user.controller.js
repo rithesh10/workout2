@@ -34,7 +34,7 @@ const generateAccessAndRefreshToken = async (userID) => {
 };
 const registerUser = asyncHandler(async (req, res) => {
   const { email, fullName, password, phone, gender } = req.body;
-  console.log(email,fullName,password,phone,gender);
+  // console.log(email,fullName,password,phone,gender);
   if (
     [fullName, email, password, phone, gender].some(
       (field) => field?.trim == "",
@@ -95,7 +95,7 @@ const registerUser = asyncHandler(async (req, res) => {
 });
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password, fullName } = req.body;
-  console.log(email, password);
+  // console.log(email, password);
 
   // Validate input
   if (!email) {
