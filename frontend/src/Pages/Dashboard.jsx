@@ -1,58 +1,82 @@
-import React, { useState ,useEffect} from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
-import { 
-  Activity, 
+import {
+  Activity,
   TrendingUp,
   Heart,
   PlusCircle,
   Calendar,
   Users,
-  BarChart
-} from 'lucide-react';
-import { Link } from 'react-router-dom';
+  BarChart,
+} from "lucide-react";
+import { Link } from "react-router-dom";
 
 // console.log(user);
 
 const Dashboard = () => {
-const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
+  // const [user, setUser] = useState(null);
+  const [name,setName]=useState("");
+  // const [loading, setLoading] = useState(true);
 
-    const getUser = async () => {
-        try {
-            const response = await axios.post(
-                'http://localhost:4000/api/v1/user/get-user',
-                {}, // Empty payload
-                { withCredentials: true } // Ensure cookies are sent
-            );
-            setUser(response.data.data); // Update the state with user data
-        } catch (err) {
-            console.error("Error fetching user:", err);
-            setUser(null); // Handle error by setting user to null
-        } finally {
-            setLoading(false); // Stop the loading spinner
-        }
-    };
+  // const getUser = async () => {
+  //     try {
+  //         const response = await axios.post(
+  //             'http://localhost:4000/api/v1/user/get-user',
+  //             {}, // Empty payload
+  //             { withCredentials: true } // Ensure cookies are sent
+  //         );
+  //         setUser(response.data.data); // Update the state with user data
+  //     } catch (err) {
+  //         console.error("Error fetching user:", err);
+  //         setUser(null); // Handle error by setting user to null
+  //     } finally {
+  //         setLoading(false); // Stop the loading spinner
+  //     }
+  // };
 
-    useEffect(() => {
-        getUser(); // Fetch user data when the component mounts
-    }, []);
-    console.log(user)
-
-    if (loading) {
-        return <p>Loading...</p>; // Show a loading indicator while fetching data
+  // useEffect(() => {
+  //     getUser(); // Fetch user data when the component mounts
+  // }, []);
+  // console.log(user)
+  let user={};
+  useEffect(()=>{
+    const storedData = localStorage.getItem("userData");
+    if (storedData) {
+      user=(JSON.parse(storedData)); // Converts back to object
+      console.log("Retrieved schema data:", user);
+      setName(user.fullName);
+      // Access schema fields
+      console.log("User ID:", user.fullName);
+      console.log("Name:", user.email);
+    } else {
+      console.log("No user data found in localStorage.");
     }
+  })
 
-    if (!user) {
-        return <p>Error: User data could not be loaded. Please <a href="/login">log in</a>.</p>; // Handle missing user data
-    }
+  // if (loading) {
+  //   return <p>Loading...</p>; // Show a loading indicator while fetching data
+  // }
+
+  if (!user) {
+    return (
+      <p>
+        Error: User data could not be loaded. Please <a href="/login">log in</a>
+        .
+      </p>
+    ); // Handle missing user data
+  }
 
   return (
     <div className="flex flex-col min-h-screen w-screen overflow-x-hidden bg-gray-100">
       <div className="w-full max-w-screen-xl mx-auto flex-1 px-4 py-10 sm:px-6 md:px-8 lg:px-16">
         <header className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-800">Welcome back, {user.fullName}!</h1>
-          <p className="text-gray-600">Last updated: {new Date().toLocaleDateString()}</p>
+          <h1 className="text-3xl font-bold text-gray-800">
+            Welcome back, {name}!
+          </h1>
+          <p className="text-gray-600">
+            Last updated: {new Date().toLocaleDateString()}
+          </p>
         </header>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 mb-8">

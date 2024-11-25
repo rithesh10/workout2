@@ -13,6 +13,7 @@ export default function Navbar() {
       console.log(response.data);
       // Redirect to the login page after successful logout
       window.history.replaceState(null, '', '/');
+      localStorage.clear();
       document.cookie = "accessToken=; Max-Age=0; path=/";
       document.cookie = "refreshToken=; Max-Age=0; path=/";
       navigate('/login');

@@ -28,6 +28,7 @@ const LoginModal = ({ closeModal }) => {
 
       if (response.status === 200) {
         console.log('Login successful:', response.data);
+        localStorage.setItem('userData', JSON.stringify(response.data.data.user));
         
         // Close the modal on success
         // Redirect to the dashboard page after login
