@@ -3,6 +3,7 @@ import { X, ChevronDown } from "lucide-react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 const url=import.meta.env.VITE_BACKEND_URL
+console.log(url);
 const RegisterModal = ({ closeModal }) => {
   const navigate = useNavigate();
   const [selectedCountry, setSelectedCountry] = useState({

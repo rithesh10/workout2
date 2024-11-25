@@ -68,7 +68,8 @@ const generateWorkoutPlan = asyncHandler(async (req, res) => {
       "Invalid format returned from the workout generator",
     );
   }
-  console.log("generated workout plan successfullly");
+  // console.log(answer);
+  // console.log("generated workout plan successfullly");
 
   // await Workout.deleteMany({ user: userId });
 
@@ -127,60 +128,85 @@ const getUserWorkoutPlans = async (req, res) => {
 
 const generate = asyncHandler(async (req, res) => {
   try {
-    // Call the testWorkout function to generate and store the workout plan
+    // Call the testWorkout function to generate the workout plan
     const { query } = req.body;
     const response = await testWorkout(query);
 
-    // Extract generated workout plan text
+    // Extract the generated text from the response
     const generated_text = response.data.generated_text;
-    console.log(generated_text);
+    console.log("Generated Text:", generated_text);
 
-    // Regular expression to match the day and workout details
+    // Regular expression to match days and workout details
     const workoutRegex =
-      /(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday):\s*([\s\S]+?)(?=\n(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday):|$)/g;
+      /(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday):\s*([\s\S]+?)(?=\n(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday):|$)/g;
 
-    // Object to hold the parsed workout plan
-    let workoutPlan = {
-      monday: [],
-      tuesday: [],
-      wednesday: [],
-      thursday: [],
-      friday: [],
-      saturday: [],
-      sunday: [],
-    };
-
-    // Matching the workout plan and parsing it
+    // Parse the workout plan into an object
+    const workoutPlan = {};
     let match;
     while ((match = workoutRegex.exec(generated_text)) !== null) {
       const day = match[1].toLowerCase(); // Extract day name
       const exercises = match[2]
         .trim()
         .split("\n")
-        .map((item) => item.replace(/^- /, "").trim()); // Extract and clean up exercises
+        .map((item) => item.replace(/^- /, "").trim()); // Clean up exercises
       workoutPlan[day] = exercises;
     }
 
-    
-    // Here, we'll save the workout plan to the database
-    const newWorkoutPlan = new WorkoutPlan({
-      workoutPlan: workoutPlan,
-    });
-    console.log(newWorkoutPlan);
+    console.log("Parsed Workout Plan:", workoutPlan);
 
-    // Save to the database
+    const transformWorkoutData = (plan) => {
+      return Object.keys(plan).map((day) => {
+        const exercises = plan[day].map((exercise) => {
+          if (exercise.toLowerCase() === "rest day") {
+            // Handle Rest Days with reps as null
+            return { name: "Rest", sets: 0, reps: null };  // No reps for rest day
+          }
+          const [name, details] = exercise.split(":");
+          if (!details) {
+            // Default for malformed or incomplete exercises
+            return { name: name.trim(), sets: 0, reps: null };
+          }
+          const [sets, reps] = details.trim().split("sets of");
+          return {
+            name: name.trim(),
+            sets: parseInt(sets.trim()) || 0, // Default to 0 if parsing fails
+            reps: reps ? reps.trim() : null, // Set reps as null if missing
+          };
+        });
+    
+        return { day: capitalize(day), exercises };
+      });
+    };
+
+    // Helper function to capitalize day names
+    const capitalize = (word) => word.charAt(0).toUpperCase() + word.slice(1);
+
+    const transformedData = transformWorkoutData(workoutPlan);
+    console.log("Transformed Data:", JSON.stringify(transformedData, null, 2));
+
+    // Create a new workout plan document
+    const newWorkoutPlan = new WorkoutPlan({
+      dailyWorkouts: transformedData,
+    });
+
+    // Save the new workout plan to the database
     await newWorkoutPlan.save();
 
     res.status(200).json({
       message: "Workout plan generated and saved successfully!",
-      response: workoutPlan,
+      response: transformedData,
     });
   } catch (error) {
+    console.error("Error:", error.message);
     res.status(500).json({
       message: "Error generating workout plan",
       error: error.message,
     });
   }
 });
+
+
+
+
 
 export { generateWorkoutPlan, getUserWorkoutPlans, generate };

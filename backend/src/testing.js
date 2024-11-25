@@ -13,9 +13,9 @@ const testWorkout = async (query) => {
             }
         });
 
+        // console.log('Response from /test-workout route:', response.data);
         return response
 
-        console.log('Response from /test-workout route:', response.data);
     } catch (error) {
         console.error('Error while testing /test-workout route:', {
             message: error.message,
