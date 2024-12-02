@@ -13,7 +13,7 @@ const testWorkout = async () => {
             }
         });
 
-        console.log('Response from /test-workout route:', response.data);
+        // console.log('Response from /test-workout route:', response.data);
     } catch (error) {
         console.error('Error while testing /test-workout route:', {
             message: error.message,

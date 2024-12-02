@@ -28,11 +28,13 @@ export default function WorkoutPlan() {
       setIsLoading(true);
 
       const response = await axios.post(
-        'http://localhost:4000/api/v1/user/generate-workout', // Replace with your backend URL
+        'http://localhost:4000/api/v1/user/generate', // Replace with your backend URL
         formData,
         { withCredentials: true }
       );
-
+      console.log(response.data);
+      console.log(response.data.data)
+      
       setworkoutPlan(response.data.data);
     } catch (err) {
       setError('Failed to generate diet plan. Please try again.');
@@ -41,12 +43,16 @@ export default function WorkoutPlan() {
     }
   };
 
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
   };
+  console.log(workoutPlan);
+  
+  
 
   return (
     <div className="min-h-screen w-screen overflow-x-hidden bg-gray-50 flex flex-col items-center justify-center py-6 px-4 sm:px-6 lg:px-8">

@@ -13,12 +13,20 @@ const Join = () => {
   },[])
   return (
     <div>
+<<<<<<< HEAD
       {/* {loading?(<Spinner/>):( */}
+=======
+      {loading?(<Spinner/>):(
+>>>>>>> aa9ed0356961870e62be6179a9cffd2bcb7a11ef
         <>
         <Navbar/>
         <Dashboard/>
         </>
+<<<<<<< HEAD
       {/* )} */}
+=======
+      )}
+>>>>>>> aa9ed0356961870e62be6179a9cffd2bcb7a11ef
     </div>
   )
 }
