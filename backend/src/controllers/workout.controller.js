@@ -5,7 +5,7 @@ import { ApiSuccess } from "../utils/ApiSuccess.js";
 import { Workout } from "../models/workout.model.js"; // Import the Workout model
 import { ExerciseFunction } from "./Exercise.controller.js";
 import { testWorkout } from "../testing.js";
-import {WorkoutPlan} from '../models/workoutPlan.js';
+import { WorkoutPlan } from "../models/workoutPlan.js";
 
 const generateWorkoutPlan = asyncHandler(async (req, res) => {
   const { age, weight, height, FitnessGoal, FitnessLevel, message } = req.body;
@@ -130,6 +130,14 @@ const generate = asyncHandler(async (req, res) => {
   try {
     // Call the testWorkout function to generate the workout plan
     const { query } = req.body;
+    const userId = req.user._id;
+    const { age, weight, height, FitnessGoal, FitnessLevel, message } =
+      req.body;
+    const queryTemplate = `
+  I am a ${age}-year-old male height is ${height} weighing ${weight} kg. My goal is to ${FitnessGoal}, 
+  and I want a 7-day workout plan that focuses on ${message}. I am a ${FitnessLevel} at the gym 
+  and want exercises that are suitable for my fitness level. Can you create a workout plan for me?
+`;
     const response = await testWorkout(query);
 
     // Extract the generated text from the response
@@ -159,7 +167,7 @@ const generate = asyncHandler(async (req, res) => {
         const exercises = plan[day].map((exercise) => {
           if (exercise.toLowerCase() === "rest day") {
             // Handle Rest Days with reps as null
-            return { name: "Rest", sets: 0, reps: null };  // No reps for rest day
+            return { name: "Rest", sets: 0, reps: null }; // No reps for rest day
           }
           const [name, details] = exercise.split(":");
           if (!details) {
@@ -173,7 +181,7 @@ const generate = asyncHandler(async (req, res) => {
             reps: reps ? reps.trim() : null, // Set reps as null if missing
           };
         });
-    
+
         return { day: capitalize(day), exercises };
       });
     };
@@ -186,16 +194,23 @@ const generate = asyncHandler(async (req, res) => {
 
     // Create a new workout plan document
     const newWorkoutPlan = new WorkoutPlan({
+      user: userId,
+      FitnessGoal,
+      FitnessLevel,
+      height,
+      weight,
+      age,
       dailyWorkouts: transformedData,
     });
 
     // Save the new workout plan to the database
     await newWorkoutPlan.save();
 
-    res.status(200).json({
-      message: "Workout plan generated and saved successfully!",
-      response: transformedData,
-    });
+    return res
+    .status(200)
+    .json(
+      new ApiSuccess(200, newWorkoutPlan, "Generated and saved workout plan"),
+    );
   } catch (error) {
     console.error("Error:", error.message);
     res.status(500).json({
@@ -204,9 +219,5 @@ const generate = asyncHandler(async (req, res) => {
     });
   }
 });
-
-
-
-
 
 export { generateWorkoutPlan, getUserWorkoutPlans, generate };
