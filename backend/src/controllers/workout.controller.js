@@ -8,6 +8,7 @@ import { testWorkout } from "../testing.js";
 import {WorkoutPlan} from '../models/workoutPlan.js';
 
 const generateWorkoutPlan = asyncHandler(async (req, res) => {
+  
   const { age, weight, height, FitnessGoal, FitnessLevel, message } = req.body;
   const userId = req.user._id;
   console.log(req.user._id);

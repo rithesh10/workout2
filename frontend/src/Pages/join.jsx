@@ -13,12 +13,12 @@ const Join = () => {
   },[])
   return (
     <div>
-      {loading?(<Spinner/>):(
+      {/* {loading?(<Spinner/>):( */}
         <>
         <Navbar/>
         <Dashboard/>
         </>
-      )}
+      {/* )} */}
     </div>
   )
 }
