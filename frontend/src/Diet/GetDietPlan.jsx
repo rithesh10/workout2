@@ -32,7 +32,7 @@ import Spinner from "../components/Spinner";
     return (
       <div className="flex justify-center w-screen items-center min-h-screen bg-gray-100 p-6">
         <div className="bg-white rounded-lg shadow-2xl w-full max-w-6xl overflow-x-auto">
-          <div className='text-center font-bold text-2xl'>current diet plan</div>
+          <div className='text-center font-bold text-2xl'>Current Diet Plan</div>
           <table className="w-full text-sm text-left text-gray-600">
             <thead className="bg-gray-900 text-white uppercase">
               <tr>

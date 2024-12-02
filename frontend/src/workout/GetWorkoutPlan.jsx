@@ -109,7 +109,7 @@ const NavbarWorkout = () => {
 
 
   return (
-    <nav className="bg-gray-900 w-full w-screen text-white p-4 relative">
+    <nav className="bg-gray-900  w-screen text-white p-4 relative">
       <div className="container mx-auto flex justify-between items-center">
         <SearchBar />
         <div className="hidden text-white  md:flex space-x-4">

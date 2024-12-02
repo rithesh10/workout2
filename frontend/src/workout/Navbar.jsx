@@ -105,7 +105,7 @@ export const SearchBar = ({ className = '' }) => {
   const { searchResults } = useSearch();
 
   return (
-    <nav className="bg-indigo-600 w-screen overflow-x-hidden top-0 text-white w-full p-4 relative">
+    <nav className="bg-indigo-600 w-screen overflow-x-hidden top-0 text-white  p-4 relative">
       <div className="container mx-auto flex justify-between items-center">
         {/* Search Bar */}
         <SearchBar />
