@@ -109,7 +109,8 @@ const getUserDietPlans = async (req, res) => {
     const userId = req.user._id; // Assuming you have user information in req.user
     try {
         const DietPlans = await Diet.find({ user: userId });
-        return res.status(200).json(new ApiSuccess(200, DietPlans, "Retrieved diet plans successfully."));
+        const DietPlan=DietPlans[DietPlans.length-1];
+        return res.status(200).json(new ApiSuccess(200, DietPlan, "Retrieved diet plans successfully."));
     } catch (error) {
         return res.status(500).json(new ApiError(500, "Failed to retrieve diet plans."));
     }

@@ -25,7 +25,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-black sticky z-50 top-0 text-white shadow-lg">
+    <nav className="bg-gray-900 sticky z-50 top-0 text-white shadow-lg">
       <div className="container mx-auto px-6 sm:px-8 lg:px-10 py-4">
         <div className="flex items-center justify-between">
           {/* Logo and Brand Name */}
@@ -37,7 +37,7 @@ export default function Navbar() {
           {/* Navigation Links */}
           <div className="flex no-underline items-center space-x-6">
             <NavLink to="/getWorkoutPlan" icon={<Dumbbell />} text="Workout" />
-            <NavLink to="/diet" icon={<Apple />} text="Diet" />
+            <NavLink to="/getDiet" icon={<Apple />} text="Diet" />
             <NavLink to="/profile" icon={<User />} text="Profile" />
 
             {/* Logout Button */}

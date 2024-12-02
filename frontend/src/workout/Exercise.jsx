@@ -52,7 +52,7 @@ const ExerciseDetail = () => {
       {/* Back Button */}
       <button 
         onClick={() => navigate(-1)}
-        className="flex items-center bg-black text-white rounded transition-colors mb-6"
+        className="flex items-center bg-gray-900 text-white rounded transition-colors mb-6"
       >
         <ArrowLeft className="w-5 h-5 mr-2" />
         Back to exercises
@@ -62,7 +62,7 @@ const ExerciseDetail = () => {
         {/* Main Content */}
         <div className="bg-white rounded-xl shadow-lg overflow-hidden">
           {/* Header Section */}
-          <div className="bg-black text-white p-8">
+          <div className="bg-gray-900 text-white p-8">
             <h1 className="text-3xl font-bold mb-4">{exercise.name}</h1>
             <p className="text-lg opacity-90">{exercise.description}</p>
           </div>

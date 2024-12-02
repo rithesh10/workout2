@@ -203,7 +203,7 @@ const UserProfile = () => {
       <div className="max-w-4xl mx-auto px-4">
         <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
           {/* Profile Header */}
-          <div className="bg-black px-6 py-8">
+          <div className="bg-gray-900 px-6 py-8">
             <div className="flex items-center">
               <div className="relative">
                 <div className="w-24 h-24 rounded-full bg-white flex items-center justify-center">
@@ -226,7 +226,7 @@ const UserProfile = () => {
                 <h2 className="text-xl font-semibold text-gray-800">Personal Information</h2>
                 <button
                   onClick={() => setIsEditing(!isEditing)}
-                  className="flex items-center text-black text-sm font-medium rounded bg-white border border-black hover:bg-black hover:text-black py-2 px-4"
+                  className="flex items-center text-black text-sm font-medium rounded bg-white border border-black hover:bg-gray-900 hover:text-black py-2 px-4"
                 >
                   {isEditing ? (
                     <>
@@ -359,7 +359,7 @@ const UserProfile = () => {
                   <div className="flex justify-end mt-6">
                     <button
                       type="submit"
-                      className="bg-black text-white px-4 py-2 rounded-md shadow-lg hover:bg-black"
+                      className="bg-gray-900 text-white px-4 py-2 rounded-md shadow-lg hover:bg-gray-900"
                     >
                       <Save className="w-4 h-4 mr-2" />
                       Save Changes
@@ -429,7 +429,8 @@ const UserProfile = () => {
                   <div className="flex justify-end mt-6">
                     <button
                       type="submit"
-                      className="bg-black text-white px-4 py-2 rounded-md shadow-lg hover:bg-black"
+                      className="bg-gray-900 text-white px-4 py-2 rounded-md shadow-lg hover:bbg-gray-900
+                      "
                     >
                       <Save className="w-4 h-4 mr-2" />
                       Save Password

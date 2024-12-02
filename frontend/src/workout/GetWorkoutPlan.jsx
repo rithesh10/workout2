@@ -3,6 +3,7 @@ import { Link, resolvePath } from 'react-router-dom';
 import { Menu, Search, X } from 'lucide-react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Spinner from '../components/Spinner';
 
 // Context for search functionality
 const SearchContext = createContext();
@@ -57,7 +58,7 @@ const SearchProvider = ({ children }) => {
 
   return (
     <SearchContext.Provider value={{ searchQuery, searchResults, handleSearch, handleExerciseSelect }}>
-      {loading ? <p>Loading...</p> : children}
+      {loading ? <Spinner/> : children}
     </SearchContext.Provider>
   );
 };
@@ -106,8 +107,9 @@ const SearchBar = ({ className = '' }) => {
 const NavbarWorkout = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+
   return (
-    <nav className="bg-black w-full w-screen text-white p-4 relative">
+    <nav className="bg-gray-900 w-full w-screen text-white p-4 relative">
       <div className="container mx-auto flex justify-between items-center">
         <SearchBar />
         <div className="hidden text-white  md:flex space-x-4">
@@ -160,7 +162,7 @@ const GetWorkoutPlan = () => {
     fetchWorkoutPlan();
   }, []);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <></>;
   if (!workoutPlan) return <p>Error: Could not load workout plan.</p>;
 
   return (
@@ -168,7 +170,7 @@ const GetWorkoutPlan = () => {
       <div className="bg-white rounded-lg shadow-2xl w-full max-w-6xl overflow-x-auto">
         <div className='text-center font-bold text-2xl'>current workout plan</div>
         <table className="w-full text-sm text-left text-gray-600">
-          <thead className="bg-black text-white uppercase">
+          <thead className="bg-gray-900 text-white uppercase">
             <tr>
               <th className="px-6 py-4">Day</th>
               <th className="px-6 py-4">Exercise</th>

@@ -15,7 +15,7 @@ import NavbarWorkout from "./workout/navbar";
 import JoinWorkout from "./workout/join";
 import WorkoutPage from "./workout/GetWorkoutPlan";
 import ExerciseDetail from "./workout/Exercise";
-
+import GetDietPlan from "./Diet/GetDietPlan";
 
 const App = () => {
 
@@ -25,6 +25,7 @@ const App = () => {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<LandingPage />} />
+
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/login" element={<LoginModal />} />
           <Route path="/register" element={<RegisterModal />} />
@@ -38,6 +39,7 @@ const App = () => {
           {/* <Route path="/joinWorkout" element={<JoinWorkout/>}/> */}
           <Route path="/getWorkoutPlan" element={<WorkoutPage/>}/>
           <Route path="/getExercise" element={<ExerciseDetail/>}/>
+          <Route path="/getDiet" element={<GetDietPlan/>}/>
         </Routes>
       </BrowserRouter>
     </div>
