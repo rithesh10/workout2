@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-const url=import.meta.env.VITE_BACKEND_URL
+import config from '../config/config';
 const UserProfile = () => {
     const [isEditing, setIsEditing] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
@@ -36,7 +36,7 @@ const UserProfile = () => {
   const getUser = async () => {
     try {
       const response = await axios.post(
-        `${url}/get-user`,
+        `${config.backendUrl}/get-user`,
         {}, // Empty payload
         { withCredentials: true } // Ensure cookies are sent
       );
@@ -52,7 +52,7 @@ const UserProfile = () => {
   const getWorkout = async () => {
     try {
       const response = await axios.post(
-        `${url}/get-user-workout-plan`,
+        `${config.backendUrl}/get-user-workout-plan`,
         {}, // Empty payload
         { withCredentials: true } // Ensure cookies are sent
       );
@@ -94,7 +94,7 @@ const UserProfile = () => {
     };
     // Make an API call to update user information
     try {
-      await axios.post(`${url}/change-user-details`,userData,{
+      await axios.post(`${config.backendUrl}/change-user-details`,userData,{
           withCredentials:true,
           headers: {
             'Content-Type': 'application/json'  // Ensure the backend expects JSON
@@ -125,7 +125,7 @@ const UserProfile = () => {
   try {
     // Make API call to change password
     const response = await axios.post(
-      `${url}/change-password`, // Change to your API endpoint
+      `${config.backendUrl}/change-password`, // Change to your API endpoint
       {
         oldPassword: passwords.currentPassword,
         newPassword: passwords.newPassword,

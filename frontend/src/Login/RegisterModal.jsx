@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { X, ChevronDown } from "lucide-react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import config from "../config/config";
 const url=import.meta.env.VITE_BACKEND_URL
 console.log(url);
 const RegisterModal = ({ closeModal }) => {
@@ -71,7 +72,7 @@ const RegisterModal = ({ closeModal }) => {
 
     try {
       const response = await axios.post(
-        `${url}/register`,
+        `${config.backendUrl}/register`,
         updatedFormdata,
         {
           headers: {

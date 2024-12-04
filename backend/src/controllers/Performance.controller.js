@@ -6,6 +6,7 @@ import { ApiSuccess } from "../utils/ApiSuccess.js";
 const AddPerformance=asyncHandler(async(req,res)=>{
     try {
         const {workoutName,sets}=req.body;
+        console.log(workoutName,sets);
         console.log(workoutName,sets)
         const userID=req.user?._id;
         if(!workoutName)
@@ -17,7 +18,7 @@ const AddPerformance=asyncHandler(async(req,res)=>{
           }
         for(const set of sets)
         {
-            if(set.set==undefined && set.rep==undefined && set.weight==undefined)
+            if(set.set==undefined || set.rep==undefined || set.weight==undefined)
             {
                 throw new ApiError(404,"rep and weight are required");
             }

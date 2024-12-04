@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { X } from 'lucide-react';
+import config from '../config/config';
 import { useNavigate } from "react-router-dom"; // Import useNavigate
-const url=import.meta.env.VITE_BACKEND_URL
+// const url=import.meta.env.VITE_BACKEND_URL
 const LoginModal = ({ closeModal }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -16,7 +17,7 @@ const LoginModal = ({ closeModal }) => {
       setError(''); // Clear previous errors
 
       // Send login request
-      const response = await axios.post(`${url}/login`, 
+      const response = await axios.post(`${config.backendUrl}/login`, 
         {
           email,
           password

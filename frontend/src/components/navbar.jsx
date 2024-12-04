@@ -1,9 +1,11 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { Home, Dumbbell, Apple, User, LogOut } from 'lucide-react';
+import { Home, Dumbbell, Apple, User, LogOut, Menu, X } from 'lucide-react';  // Import Menu and X icons for hamburger
+import { useState } from 'react';
 import axios from 'axios';
 
 export default function Navbar() {
   const navigate = useNavigate();
+  const [isMenuOpen, setIsMenuOpen] = useState(false); // State for managing the mobile menu visibility
 
   const handleLogout = async () => {
     try {
@@ -11,7 +13,6 @@ export default function Navbar() {
         withCredentials: true,
       });
       console.log(response.data);
-      // Redirect to the login page after successful logout
       window.history.replaceState(null, '', '/');
       localStorage.clear();
       document.cookie = "accessToken=; Max-Age=0; path=/";
@@ -19,7 +20,6 @@ export default function Navbar() {
       navigate('/login');
     } catch (error) {
       console.log(error);
-      // Optionally, add a message for failed logout
       alert('Logout failed. Please try again.');
     }
   };
@@ -34,8 +34,16 @@ export default function Navbar() {
             <span className="font-semibold text-white text-2xl">FitTrack Pro</span>
           </Link>
 
-          {/* Navigation Links */}
-          <div className="flex no-underline items-center space-x-6">
+          {/* Mobile Hamburger Icon */}
+          <button 
+            onClick={() => setIsMenuOpen(!isMenuOpen)} 
+            className="lg:hidden text-white focus:outline-none"
+          >
+            {isMenuOpen ? <X className="h-6 bg-gray-900 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
+          
+          {/* Navigation Links - For Large Screens */}
+          <div className="hidden lg:flex no-underline items-center space-x-6">
             <NavLink to="/getWorkoutPlan" icon={<Dumbbell />} text="Workout" />
             <NavLink to="/getDiet" icon={<Apple />} text="Diet" />
             <NavLink to="/profile" icon={<User />} text="Profile" />
@@ -50,6 +58,24 @@ export default function Navbar() {
             </button>
           </div>
         </div>
+        
+        {/* Mobile Navigation Links */}
+        {isMenuOpen && (
+          <div className="lg:hidden mt-4 space-y-4">
+            <NavLink to="/getWorkoutPlan" icon={<Dumbbell />} text="Workout" />
+            <NavLink to="/getDiet" icon={<Apple />} text="Diet" />
+            <NavLink to="/profile" icon={<User />} text="Profile" />
+
+            {/* Logout Button */}
+            <button
+              onClick={handleLogout}
+              className="flex items-center space-x-2 text-black hover:text-gray-300 rounded-md px-3 py-2 bg-white"
+            >
+              <LogOut className="h-5 w-5" />
+              <span>Logout</span>
+            </button>
+          </div>
+        )}
       </div>
     </nav>
   );

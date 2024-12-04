@@ -16,6 +16,7 @@ import JoinWorkout from "./workout/join";
 import WorkoutPage from "./workout/GetWorkoutPlan";
 import ExerciseDetail from "./workout/Exercise";
 import GetDietPlan from "./Diet/GetDietPlan";
+import PerformanceModal from "./workout/Performance";
 
 const App = () => {
 
@@ -40,6 +41,7 @@ const App = () => {
           <Route path="/getWorkoutPlan" element={<WorkoutPage/>}/>
           <Route path="/getExercise" element={<ExerciseDetail/>}/>
           <Route path="/getDiet" element={<GetDietPlan/>}/>
+          <Route path="/performance" element={<PerformanceModal/>}/>
         </Routes>
       </BrowserRouter>
     </div>

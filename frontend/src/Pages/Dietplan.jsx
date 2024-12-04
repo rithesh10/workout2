@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
+import config from '../config/config';
 
 export default function DietPlan() {
   const [formData, setFormData] = useState({
@@ -28,7 +29,7 @@ export default function DietPlan() {
       setIsLoading(true);
 
       const response = await axios.post(
-        'http://localhost:4000/api/v1/user/generate-diet', // Replace with your backend URL
+        `${config.backendUrl}/generate-diet`, // Replace with your backend URL
         formData,
         { withCredentials: true }
       );
@@ -129,7 +130,7 @@ export default function DietPlan() {
           {error && <p className="text-red-500 text-sm">{error}</p>}
           <button
             type="submit"
-            className={`text-white ${isLoading ? 'bg-gray-500' : 'bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300'} font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 inline-flex items-center`}
+            className={`text-white ${isLoading ? 'bg-gray-500' : 'bg-gray hover:bg-gray-900 focus:ring-4 focus:ring-gray-400'} font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 dark:bg-gray-500 dark:hover:bg-gray-900 border-none dark:focus:ring-gray inline-flex items-center`}
             disabled={isLoading}
           >
             {isLoading ? (

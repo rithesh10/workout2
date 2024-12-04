@@ -4,6 +4,8 @@ import { Menu, Search, X } from 'lucide-react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Spinner from '../components/Spinner';
+import PerformanceModal from './Performance';
+import config from '../config/config';
 
 // Context for search functionality
 const SearchContext = createContext();
@@ -20,12 +22,12 @@ const SearchProvider = ({ children }) => {
   const fetchExercises = async () => {
     try {
       const response = await axios.post(
-        'http://localhost:4000/api/v1/user/get-exercises',
+        `${config.backendUrl}/user/get-exercises`,
         {},
         { withCredentials: true }
       );
       setExercises(response.data.data || []);
-      console.log(response.data.data)
+      // console.log(response.data.data)
     } catch (err) {
       console.error('Error fetching exercises:', err);
     } finally {
@@ -140,15 +142,20 @@ const NavbarWorkout = () => {
 };
 
 // Workout Plan Component
-const GetWorkoutPlan = () => {
+const GetWorkoutPlan = ({onOpenModal}) => {
   const [workoutPlan, setWorkoutPlan] = useState(null);
   const [loading, setLoading] = useState(true);
-
+  const navigate=useNavigate();
+const handleOpen=(exercise)=>{
+  onOpenModal(exercise)
+  // navigate('/performance')
+  
+}
   useEffect(() => {
     const fetchWorkoutPlan = async () => {
       try {
         const response = await axios.post(
-          'http://localhost:4000/api/v1/user/get-user-workout-plan',
+          `${config.backendUrl}/get-user-workout-plan`,
           {},
           { withCredentials: true }
         );
@@ -166,7 +173,7 @@ const GetWorkoutPlan = () => {
   if (!workoutPlan) return <p>Error: Could not load workout plan.</p>;
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100 p-6">
+    <div className="flex justify-center w-screen items-center min-h-screen bg-gray-100 p-6">
       <div className="bg-white rounded-lg shadow-2xl w-full max-w-6xl overflow-x-auto">
         <div className='text-center font-bold text-2xl'>current workout plan</div>
         <table className="w-full text-sm text-left text-gray-600">
@@ -174,6 +181,7 @@ const GetWorkoutPlan = () => {
             <tr>
               <th className="px-6 py-4">Day</th>
               <th className="px-6 py-4">Exercise</th>
+              <th  className="px-6 py-4" >performance</th>
               <th className="px-6 py-4">Sets</th>
               <th className="px-6 py-4">Reps</th>
             </tr>
@@ -182,16 +190,24 @@ const GetWorkoutPlan = () => {
             {workoutPlan.dailyWorkouts.map((workout, dayIndex) => (
               <React.Fragment key={dayIndex}>
                 <tr className="bg-blue-50 font-bold">
-                  <td colSpan="4" className="px-6 py-3 text-black text-lg">
+                  <td colSpan="4" className="px-6 py-4 text-black text-lg">
                     {workout.day}
                   </td>
                 </tr>
                 {workout.exercises.map((exercise, exerciseIndex) => (
                   <tr key={exerciseIndex} className="border-b hover:bg-gray-50">
-                    <td className="px-6 py-4"></td>
+                    {/* <button className="px-6 py-4 "onClick={handleOpen}> */}
+                    <td className=""></td>  
                     <td className="px-6 py-4">{exercise.name}</td>
-                    <td className="px-6 py-4">{exercise.sets}</td>
+                    <button 
+                      onClick={() => handleOpen(exercise.name)} 
+                      className="px-3  my-3 bg-gray-300 text-black rounded-lg shadow-lg hover:bg-gray-500 focus:outline-none  border-none transition-all"
+                    >
+                      Add Performance
+                    </button>
+                      <td className="px-6 py-4">{exercise.sets}</td>
                     <td className="px-6 py-4">{exercise.reps}</td>
+                    {/* </button> */}
                   </tr>
                 ))}
               </React.Fragment>
@@ -205,11 +221,28 @@ const GetWorkoutPlan = () => {
 
 // Unified Component
 export default function WorkoutPage() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [exerciseName, setExerciseName] = useState('');
+
+  const openModal = (exercise) => {
+    setExerciseName(exercise); // Set the exercise name dynamically
+    setIsModalOpen(true); // Open the modal
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false); // Close the modal
+  };
 
   return (
     <SearchProvider>
-      <NavbarWorkout />
-      <GetWorkoutPlan />
+      { <NavbarWorkout />} 
+      <GetWorkoutPlan onOpenModal={openModal} />
+     {isModalOpen  && < PerformanceModal
+        exerciseName={exerciseName}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />}
     </SearchProvider>
+ 
   );
 }
