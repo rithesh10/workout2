@@ -286,6 +286,17 @@ const updateUserDetails = asyncHandler(async (req, res) => {
     .json(new ApiSuccess(200, user, "Successfully updated user details"));
 });
 
+const getAllUsers = asyncHandler(async(req,res)=>{
+  const users = await User.find()
+  if(!users){
+    throw new ApiError("Users not there");
+  }
+  return res
+    .status(200)
+    .json(new ApiSuccess(200, users, "Successfully updated user details"));
+
+})
+
 export {
   registerUser,
   loginUser,
@@ -294,5 +305,6 @@ export {
   logout,
   refreshAccessToken,
   updateUserDetails,
+  getAllUsers
   // updateProfilePic,
 };
