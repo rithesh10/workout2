@@ -143,7 +143,7 @@ const generate = asyncHandler(async (req, res) => {
 
     // Extract the generated text from the response
     const generated_text = response.data.generated_text;
-    console.log("Generated Text:", generated_text);
+    // console.log("Generated Text:", generated_text);
 
     // Regular expression to match days and workout details
     const workoutRegex =
@@ -161,7 +161,7 @@ const generate = asyncHandler(async (req, res) => {
       workoutPlan[day] = exercises;
     }
 
-    console.log("Parsed Workout Plan:", workoutPlan);
+    // console.log("Parsed Workout Plan:", workoutPlan);
 
     const transformWorkoutData = (plan) => {
       return Object.keys(plan).map((day) => {
@@ -191,7 +191,7 @@ const generate = asyncHandler(async (req, res) => {
     const capitalize = (word) => word.charAt(0).toUpperCase() + word.slice(1);
 
     const transformedData = transformWorkoutData(workoutPlan);
-    console.log("Transformed Data:", JSON.stringify(transformedData, null, 2));
+    // console.log("Transformed Data:", JSON.stringify(transformedData, null, 2));
 
     // Create a new workout plan document
     const newWorkoutPlan = new WorkoutPlan({
@@ -235,10 +235,12 @@ const getWorkoutPlan = asyncHandler(async(req,res)=>{
       );
     }
 
+    const workoutPlan = workoutPlans[workoutPlans.length-1]
+
     return res
     .status(200)
     .json(
-      new ApiSuccess(200, workoutPlans, "WorkoutPlan generated"),
+      new ApiSuccess(200, workoutPlan, "WorkoutPlan generated"),
     );
 
   } catch (error) {
