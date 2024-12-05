@@ -127,11 +127,12 @@ const getDietPlan = asyncHandler(async(req,res)=>{
         "Invalid format returned from the workout generator",
       );
     }
+    const dietPlan = dietPlans[dietPlans.length-1];
 
     return res
     .status(200)
     .json(
-      new ApiSuccess(200, dietPlans, "DietPlan generated"),
+      new ApiSuccess(200, dietPlan, "DietPlan generated"),
     );
 
   } catch (error) {

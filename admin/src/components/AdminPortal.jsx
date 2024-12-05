@@ -3,7 +3,7 @@ import { Routes, Route, Link, useNavigate } from "react-router-dom";
 import Dashboard from "../pages/Dashboard";
 import UserManagement from "../pages/UserManagement";
 import WorkoutPlans from "../pages/WorkoutPlans";
-import ClassSchedule from "../pages/ClassSchedule";
+import ClassSchedule from "../pages/UserProfile";
 
 const AdminPortal = () => {
   const navigate = useNavigate();
@@ -41,7 +41,7 @@ const AdminPortal = () => {
               to="/admin/classes"
               className="block py-2 px-4 hover:bg-gray-700 rounded"
             >
-              Class Schedule
+              Users Profile
             </Link>
           </nav>
         </div>
