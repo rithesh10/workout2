@@ -221,4 +221,28 @@ const generate = asyncHandler(async (req, res) => {
   }
 });
 
-export { generateWorkoutPlan, getUserWorkoutPlans, generate };
+const getWorkoutPlan = asyncHandler(async(req,res)=>{
+  const userId = req.params.userId;
+  console.log(" HEllo");
+  
+
+  try {
+    const workoutPlans = await WorkoutPlan.find({ user: userId });
+    if (workoutPlans.length === 0) {
+      throw new ApiError(
+        400,
+        "Invalid format returned from the workout generator",
+      );
+    }
+
+    return res
+    .status(200)
+    .json(
+      new ApiSuccess(200, workoutPlans, "WorkoutPlan generated"),
+    );
+
+  } catch (error) {
+    
+  }
+})
+export { generateWorkoutPlan, getUserWorkoutPlans, generate, getWorkoutPlan };

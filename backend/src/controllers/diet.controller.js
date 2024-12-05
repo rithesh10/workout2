@@ -116,5 +116,27 @@ const getUserDietPlans = async (req, res) => {
     }
 };
 
+const getDietPlan = asyncHandler(async(req,res)=>{
+  const userId = req.params.userId;
+  console.log(" HEllo");
+  try {
+    const dietPlans = await Diet.find({ user: userId });
+    if (dietPlans.length === 0) {
+      throw new ApiError(
+        400,
+        "Invalid format returned from the workout generator",
+      );
+    }
 
-export { generateDietPlan,getUserDietPlans };
+    return res
+    .status(200)
+    .json(
+      new ApiSuccess(200, dietPlans, "DietPlan generated"),
+    );
+
+  } catch (error) {
+    
+  }
+})
+
+export { generateDietPlan,getUserDietPlans,getDietPlan };
