@@ -118,7 +118,7 @@ const getUserDietPlans = async (req, res) => {
 
 const getDietPlan = asyncHandler(async(req,res)=>{
   const userId = req.params.userId;
-  console.log(" HEllo");
+  // console.log(" HEllo");
   try {
     const dietPlans = await Diet.find({ user: userId });
     if (dietPlans.length === 0) {
