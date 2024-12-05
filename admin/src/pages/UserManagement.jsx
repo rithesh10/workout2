@@ -42,10 +42,8 @@ const UserManagement = () => {
       setFetchError(null);
       const response = await axios.get(`http://127.0.0.1:4000/api/v1/user/get-workout/${userId}`);
       if (response.data && response.data.data) {
-        const latestWorkout = response.data.data.sort(
-          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-        )[0];
-        setSelectedWorkout(latestWorkout);
+        
+        setSelectedWorkout(response.data.data);
       } else {
         setSelectedWorkout(null); // No workout data found
       }
