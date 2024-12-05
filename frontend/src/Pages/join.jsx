@@ -17,7 +17,7 @@ const Join = () => {
         <>
         <Navbar/>
         <Dashboard/>
-        <Footer/>
+        {/* <Footer/> */}
         </>
 
     </div>

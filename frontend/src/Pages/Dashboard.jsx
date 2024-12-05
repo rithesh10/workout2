@@ -100,7 +100,7 @@ const Dashboard = () => {
           />
         </div>
 
-        <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <QuickAction
             icon={<PlusCircle className="h-6 w-6" />}
             title="Create Workout Plan"
@@ -125,12 +125,12 @@ const Dashboard = () => {
             description="Connect with others and share your fitness experiences"
             link="/community"
           /> */}
-          <QuickAction
+          {/* <QuickAction
             icon={<BarChart className="h-6 w-6" />}
             title="Analyze Data"
             description="Dive into your fitness data and uncover insights"
             link="/analytics"
-          />
+          /> */}
         </div>
       </div>
     </div>

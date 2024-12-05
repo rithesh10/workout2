@@ -22,12 +22,13 @@ const SearchProvider = ({ children }) => {
   const fetchExercises = async () => {
     try {
       const response = await axios.post(
-        `${config.backendUrl}/user/get-exercises`,
+        `${config.backendUrl}/get-exercises`,
         {},
         { withCredentials: true }
       );
       setExercises(response.data.data || []);
       // console.log(response.data.data)
+      
     } catch (err) {
       console.error('Error fetching exercises:', err);
     } finally {
@@ -115,7 +116,7 @@ const NavbarWorkout = () => {
       <div className="container mx-auto flex justify-between items-center">
         <SearchBar />
         <div className="hidden text-white  md:flex space-x-4">
-          <h5>Workouts</h5>
+          {/* <Link to='/profile' className="block py-2 text-white hover:text-gray-300"><User/> profile</Link> */}
           <h5>diets</h5>
           {/* <h</h5> */}
           {/* <Link to="/workouts" className="hover:text-gray-300">Workouts</Link>

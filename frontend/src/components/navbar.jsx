@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Home, Dumbbell, Apple, User, LogOut, Menu, X } from 'lucide-react';  // Import Menu and X icons for hamburger
 import { useState } from 'react';
 import axios from 'axios';
+import config from '../config/config';
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -9,7 +10,7 @@ export default function Navbar() {
 
   const handleLogout = async () => {
     try {
-      const response = await axios.post('http://localhost:4000/api/v1/user/logout', {}, {
+      const response = await axios.post(`${config.backendUrl}/logout`, {}, {
         withCredentials: true,
       });
       console.log(response.data);

@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Users, Dumbbell, Calendar, TrendingUp } from "lucide-react";
+import config from "../config/config";
 
 const Dashboard = () => {
   const [users, setUsers] = useState([]); // State to store user data
   const [loading, setLoading] = useState(true); // State for loading status
   const [error, setError] = useState(null); // State for error handling
+  const [workuts,setWorkouts]=useState([]);
+  
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:4000/api/v1/user/get-all-users"); // Replace with your API endpoint
+      const response = await axios.get(`${config.BACKEND_URL}/get-all-users`
+); // Replace with your API endpoint
       if (response.data && response.data.data) {
         setUsers(response.data.data.map(user => ({
           fullName: user.fullName,

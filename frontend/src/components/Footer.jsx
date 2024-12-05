@@ -5,7 +5,7 @@ import { Facebook, Instagram, Twitter, Mail, Phone } from 'lucide-react';
 const Footer = () => {
   return (
     <footer className="bg-gray-900 text-white py-12 px-4">
-      <div className="container mx-auto grid md:grid-cols-3 gap-8">
+      <div className="container mx-auto grid md:grid-cols-2 gap-8">
         {/* Company Info */}
         <div>
           <h3 className="text-xl font-bold mb-4">FitTrack</h3>
@@ -58,7 +58,7 @@ const Footer = () => {
             </div>
             <div className="flex items-center">
               <Phone size={20} className="mr-2" />
-              <span className="text-gray-300">+1 (555) 123-4567</span>
+              <span className="text-gray-300">+91 798 199 1406</span>
             </div>
           </div>
         </div>

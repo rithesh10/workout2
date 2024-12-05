@@ -9,6 +9,8 @@ import ExerciseRouter from "./routes/exercise.routes.js";
 import FoodRouter from "./routes/FoodData.routes.js";
 import weightLogRouter from "./routes/weightLog.route.js";
 import performanceRouter from "./routes/performance.routes.js";
+// import AdminLogin from "../../admin/src/components/AdminLogin.jsx";
+import AdminRouter from "./routes/Admin.routes.js";
 app.use(cors({
     origin: ['http://localhost:5174', 'http://localhost:5173'],
     credentials:true
@@ -27,4 +29,5 @@ app.use("/api/v1/user",ExerciseRouter)
 app.use("/api/v1/user",FoodRouter);
 app.use("/api/v1/user",weightLogRouter)
 app.use("/api/v1/user",performanceRouter)
+app.use("/api/v1/admin",AdminRouter);
 export {app}    
