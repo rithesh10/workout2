@@ -26,7 +26,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-gray-900 sticky z-50 top-0 text-white shadow-lg">
+    <nav className="bg-black sticky z-50 top-0 text-white shadow-lg">
       <div className="container mx-auto px-6 sm:px-8 lg:px-10 py-4">
         <div className="flex items-center justify-between">
           {/* Logo and Brand Name */}

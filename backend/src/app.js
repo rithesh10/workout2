@@ -11,16 +11,22 @@ import weightLogRouter from "./routes/weightLog.route.js";
 import performanceRouter from "./routes/performance.routes.js";
 // import AdminLogin from "../../admin/src/components/AdminLogin.jsx";
 import AdminRouter from "./routes/Admin.routes.js";
-app.use(cors({
-    origin: ['http://localhost:5174', 'http://localhost:5173','https://e500-2401-4900-658d-9d18-b1d0-7a95-eea9-b83.ngrok-free.app'],
-    // origin: ['https://e500-2401-4900-658d-9d18-b1d0-7a95-eea9-b83.ngrok-free.app'],
-    credentials:true
-}));
+app.use(
+    cors({
+        origin: [
+            'http://localhost:5174',
+            'http://localhost:5173',
+            'https://8a15-2409-40f0-1030-79f3-21e2-f970-5d00-1704.ngrok-free.app',
+        ],
+        credentials: true, // Enable sending cookies
+    })
+);
 
-app.use(express.json({limit:"16kb"}))
-app.use(express.urlencoded({extended:true,limit:"16kb"}))
-app.use(express.static("public"))
-app.use(cookieParser())
+app.use(express.json({ limit: '16kb' }));
+app.use(express.urlencoded({ extended: true, limit: '16kb' }));
+app.use(express.static('public'));
+app.use(cookieParser());
+
 //routes
 
 app.use("/api/v1/user",UserRouter);
