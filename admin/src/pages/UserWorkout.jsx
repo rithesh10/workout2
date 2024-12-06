@@ -1,127 +1,194 @@
 import React from "react";
-import { Dumbbell, User, Scale, Ruler, Target, Activity } from 'lucide-react';
+import { Dumbbell, User, Scale, Target, Activity } from 'lucide-react';
 
 const UserWorkout = ({ selectedWorkout, selectedUser, fetchError, onClose }) => {
-  if (!selectedWorkout) {
+  // Normalize workout data
+  const workoutData = Array.isArray(selectedWorkout) 
+    ? selectedWorkout[0] 
+    : selectedWorkout;
+
+  // If there's a fetch error
+  if (fetchError) {
     return (
-      <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50">
-        <div className="bg-white p-6 rounded-2xl shadow-2xl w-full max-w-md">
+      <div className="fixed inset-0 bg-gradient-to-br from-red-100 to-red-200 flex justify-center items-center z-50 p-4">
+        <div className="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full border-2 border-red-300">
+          <h2 className="text-2xl font-bold text-red-600 mb-4 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 mr-3 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Error
+          </h2>
+          <p className="text-red-700 mb-6">{fetchError}</p>
           <button 
-            onClick={onClose}
-            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full p-2 transition"
+            onClick={onClose} 
+            className="w-full bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none"
           >
-            ✕
+            Close
           </button>
-          
-          <div className="text-center">
-            <div className="w-24 h-24 mx-auto bg-blue-100 rounded-full flex items-center justify-center mb-4">
-              <Dumbbell className="text-blue-600" size={48} />
-            </div>
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">
-              {selectedUser?.fullName || "User"}'s Workout Plan
-            </h2>
-            <p className="text-gray-500 mb-6">No workout plan available.</p>
-            <button
-              onClick={onClose}
-              className="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600 transition"
-            >
-              Close
-            </button>
-          </div>
         </div>
       </div>
     );
   }
 
-  return (
-    <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-xl max-h-[90vh] overflow-auto p-8 relative">
-        <button 
-          onClick={onClose}
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full p-2 transition"
-        >
-          ✕
-        </button>
-
-        <div className="text-center mb-8">
-          <div className="w-24 h-24 mx-auto bg-blue-100 rounded-full flex items-center justify-center mb-4">
-            <Dumbbell className="text-blue-600" size={48} />
-          </div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">
-            {selectedUser?.fullName}'s Workout Plan
+  // Check if workout data is valid
+  if (!workoutData || !workoutData.dailyWorkouts || workoutData.dailyWorkouts.length === 0) {
+    return (
+      <div className="fixed inset-0 bg-gradient-to-br from-blue-100 to-blue-200 flex justify-center items-center z-50 p-4">
+        <div className="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full border-2 border-blue-300">
+          <h2 className="text-2xl font-bold text-blue-800 mb-4 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 mr-3 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 005.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            No Workout Data
           </h2>
+          <p className="text-gray-600 mb-6">No workout information found for this user.</p>
+          <button 
+            onClick={onClose} 
+            className="w-full bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Calculate workout metrics
+  const calculateWorkoutMetrics = () => {
+    const totalWorkoutDays = workoutData.dailyWorkouts.filter(day => day.exercises.length > 0).length;
+    const totalExercises = workoutData.dailyWorkouts.reduce((total, day) => 
+      total + day.exercises.length, 0
+    );
+    const averageExercisesPerDay = (totalExercises / totalWorkoutDays).toFixed(1);
+
+    return {
+      totalWorkoutDays,
+      totalExercises,
+      averageExercisesPerDay
+    };
+  };
+
+  const workoutMetrics = calculateWorkoutMetrics();
+
+  return (
+    <div className="fixed inset-0 bg-gradient-to-br from-blue-50 to-blue-100 flex justify-center items-center z-50 p-4">
+      <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border-2 border-blue-200">
+        {/* Header */}
+        <div className="bg-blue-600 text-white p-6 rounded-t-2xl flex justify-between items-center">
+          <h2 className="text-2xl font-bold">
+            Workout Plan - {selectedUser?.fullName || 'User'}
+          </h2>
+          <button 
+            onClick={onClose} 
+            className="text-white hover:text-red-300 transition duration-300"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
         </div>
 
-        {fetchError ? (
-          <div className="bg-red-50 border border-red-200 p-4 rounded-lg mb-4">
-            <p className="text-red-600">{fetchError}</p>
-          </div>
-        ) : (
-          <>
-            <div className="grid grid-cols-2 gap-4 mb-6">
-              <div className="bg-gray-50 p-4 rounded-lg flex items-center space-x-3">
-                <Target className="text-blue-600" size={20} />
-                <div>
-                  <p className="text-sm text-gray-500">Fitness Goal</p>
-                  <p className="font-semibold">{selectedWorkout.FitnessGoal}</p>
-                </div>
-              </div>
-              <div className="bg-gray-50 p-4 rounded-lg flex items-center space-x-3">
-                <Activity className="text-blue-600" size={20} />
-                <div>
-                  <p className="text-sm text-gray-500">Fitness Level</p>
-                  <p className="font-semibold">{selectedWorkout.FitnessLevel}</p>
-                </div>
-              </div>
-              <div className="bg-gray-50 p-4 rounded-lg flex items-center space-x-3">
-                <User className="text-blue-600" size={20} />
-                <div>
-                  <p className="text-sm text-gray-500">Age</p>
-                  <p className="font-semibold">{selectedWorkout.age} years</p>
-                </div>
-              </div>
-              <div className="bg-gray-50 p-4 rounded-lg flex items-center space-x-3">
-                <Scale className="text-blue-600" size={20} />
-                <div>
-                  <p className="text-sm text-gray-500">Weight</p>
-                  <p className="font-semibold">{selectedWorkout.weight} kg</p>
-                </div>
-              </div>
+        {/* Workout Overview */}
+        <div className="grid md:grid-cols-3 gap-6 p-6">
+          {[
+            { label: 'Total Workout Days', value: workoutMetrics.totalWorkoutDays, color: 'blue' },
+            { label: 'Total Exercises', value: workoutMetrics.totalExercises, color: 'green' },
+            { label: 'Avg. Exercises/Day', value: workoutMetrics.averageExercisesPerDay, color: 'amber' }
+          ].map((metric, index) => (
+            <div 
+              key={index} 
+              className={`bg-${metric.color}-50 p-6 rounded-lg border-2 border-${metric.color}-200 shadow-md hover:shadow-xl transition duration-300`}
+            >
+              <h3 className={`text-lg font-semibold text-${metric.color}-700 mb-2`}>{metric.label}</h3>
+              <p className={`text-4xl font-bold text-${metric.color}-800`}>{metric.value}</p>
             </div>
+          ))}
+        </div>
 
-            <div className="space-y-4">
-              {selectedWorkout.dailyWorkouts.map((dailyWorkout, i) => (
-                <div key={i} className="bg-gray-50 rounded-lg p-4">
-                  <h3 className="font-semibold text-lg text-gray-800 mb-3">
+        {/* User Details */}
+        <div className="bg-gray-50 p-6 m-6 rounded-lg border-2 border-gray-200">
+          <h3 className="text-xl font-bold text-gray-800 mb-6">Fitness Profile</h3>
+          <div className="grid md:grid-cols-2 gap-4">
+            {[
+              { 
+                icon: Target, 
+                label: 'Fitness Goal', 
+                value: workoutData.FitnessGoal || 'Not Specified',
+                color: 'blue'
+              },
+              { 
+                icon: Activity, 
+                label: 'Fitness Level', 
+                value: workoutData.FitnessLevel || 'Not Specified',
+                color: 'green'
+              },
+              { 
+                icon: User, 
+                label: 'Age', 
+                value: `${workoutData.age} years`,
+                color: 'amber'
+              },
+              { 
+                icon: Scale, 
+                label: 'Weight', 
+                value: `${workoutData.weight} kg`,
+                color: 'purple'
+              }
+            ].map((detail, index) => (
+              <div 
+                key={index} 
+                className={`bg-${detail.color}-50 p-4 rounded-lg flex items-center space-x-4 border-2 border-${detail.color}-200 hover:shadow-md transition duration-300`}
+              >
+                <detail.icon className={`text-${detail.color}-600`} size={24} />
+                <div>
+                  <p className={`text-sm text-${detail.color}-700`}>{detail.label}</p>
+                  <p className="font-semibold text-gray-800">{detail.value}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Detailed Workout Log */}
+        <div className="bg-gradient-to-r from-indigo-100 to-purple-100 p-6 m-6 rounded-lg border-2 border-indigo-200">
+          <h3 className="text-xl font-bold text-indigo-800 mb-6">Weekly Workout Breakdown</h3>
+          <div className="space-y-4">
+            {workoutData.dailyWorkouts.map((dailyWorkout, index) => (
+              <div 
+                key={index} 
+                className="bg-white rounded-lg shadow-md border-2 border-indigo-100 hover:shadow-xl transition duration-300"
+              >
+                <div className="p-4 bg-indigo-50 border-b border-indigo-100">
+                  <h4 className="font-semibold text-lg text-indigo-800">
                     {dailyWorkout.day}
-                  </h3>
+                  </h4>
+                </div>
+                <div className="p-4">
                   {dailyWorkout.exercises.length === 0 ? (
-                    <p className="text-gray-500">Rest day</p>
+                    <p className="text-gray-500 italic">Rest day</p>
                   ) : (
                     <div className="space-y-3">
-                      {dailyWorkout.exercises.map((exercise, j) => (
-                        <div key={j} className="bg-white p-3 rounded-lg shadow-sm">
-                          <p className="font-medium text-gray-800">{exercise.name}</p>
-                          <div className="flex space-x-4 mt-1 text-sm text-gray-600">
-                            <p>Sets: {exercise.sets}</p>
-                            <p>Reps: {exercise.reps || "N/A"}</p>
+                      {dailyWorkout.exercises.map((exercise, exerciseIndex) => (
+                        <div 
+                          key={exerciseIndex} 
+                          className="bg-gray-50 p-3 rounded-lg hover:bg-indigo-50 transition duration-200"
+                        >
+                          <div className="flex justify-between items-center">
+                            <p className="font-medium text-gray-800">{exercise.name}</p>
+                            <div className="flex space-x-4 text-sm text-gray-600">
+                              <span>Sets: {exercise.sets}</span>
+                              <span>Reps: {exercise.reps || "N/A"}</span>
+                            </div>
                           </div>
                         </div>
                       ))}
                     </div>
                   )}
                 </div>
-              ))}
-            </div>
-          </>
-        )}
-
-        <button
-          onClick={onClose}
-          className="w-full mt-6 bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600 transition"
-        >
-          Close
-        </button>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

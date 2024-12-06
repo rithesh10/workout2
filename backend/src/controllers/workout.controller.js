@@ -223,7 +223,7 @@ const generate = asyncHandler(async (req, res) => {
 
 const getWorkoutPlan = asyncHandler(async(req,res)=>{
   const userId = req.params.userId;
-  console.log(" HEllo");
+  // console.log(" HEllo");
   
 
   try {
