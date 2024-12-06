@@ -129,15 +129,15 @@ const NavbarWorkout = () => {
         <div className="hidden md:flex items-center space-x-6">
           <SearchBar />
           <div className="flex items-center space-x-4">
-            <Link 
+            {/* <Link 
               to="/workouts" 
               className="flex items-center space-x-1 no-underline text-white hover:text-blue-300 transition-colors"
             >
               <Dumbbell className="h-5 w-5" />
               <span>Workouts</span>
-            </Link>
+            </Link> */}
             <Link 
-              to="/diet" 
+              to="/getDiet" 
               className="flex items-center space-x-1 no-underline text-white hover:text-green-300 transition-colors"
             >
               <Utensils className="h-5 w-5" />
@@ -179,7 +179,7 @@ const NavbarWorkout = () => {
                 <span>Workouts</span>
               </Link>
               <Link 
-                to="/diet" 
+                to="/getDiet" 
                 className="block py-2 flex items-center space-x-2 no-underline text-white hover:bg-gray-700 rounded-md transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >

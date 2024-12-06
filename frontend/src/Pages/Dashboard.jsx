@@ -100,6 +100,7 @@ const Dashboard = () => {
         />
       </div>
     </div>
+    <hr />
   </div>
 );
 };
