@@ -1,11 +1,12 @@
 import React, { useState, useEffect, createContext, useContext } from 'react';
 import { Link, resolvePath } from 'react-router-dom';
-import { Menu, Search, X } from 'lucide-react';
+import { Dumbbell, Menu, Search, User, Utensils, X } from 'lucide-react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Spinner from '../components/Spinner';
 import PerformanceModal from './Performance';
 import config from '../config/config';
+
 
 // Context for search functionality
 const SearchContext = createContext();
@@ -80,33 +81,33 @@ const SearchBar = ({ className = '' }) => {
   const { searchQuery, searchResults, handleSearch, handleExerciseSelect } = useSearch();
 
   return (
-    <div className={`relative w-full max-w-md ${className}`}>
-      <div className="flex items-center bg-white rounded-full p-2 w-full">
-        <Search className="text-gray-400 mr-2" />
-        <input
-          type="text"
-          placeholder="Search exercises..."
-          className="bg-transparent w-full focus:outline-none text-black"
-          value={searchQuery}
-          onChange={(e) => handleSearch(e.target.value)}
-        />
-      </div>
-
-      {searchResults.length > 0 && (
-        <div className="absolute top-full left-0 w-full bg-white text-black shadow-lg rounded-b-lg mt-1 max-h-64 overflow-y-auto">
-          {searchResults.map((exercise) => (
-            <div
-              key={exercise.id}
-              className="p-2 hover:bg-gray-200 cursor-pointer border-b last:border-b-0"
-              onClick={() => handleExerciseSelect(exercise)}
-            >
-              <div className="font-semibold">{exercise.name}</div>
-              <div className="text-xs text-gray-500">{exercise.muscleGroup}</div>
-            </div>
-          ))}
-        </div>
-      )}
+    <div className={`relative w-full  max-w-lg ${className}`}>
+    <div className="flex items-center bg-gray-800 rounded-full p-2 w-full border border-gray-700">
+      <Search className="text-gray-400 mr-2" />
+      <input
+        type="text"
+        placeholder="Search exercises..."
+        className="bg-transparent w-full focus:outline-none text-white placeholder-gray-500"
+        value={searchQuery}
+        onChange={(e) => handleSearch(e.target.value)}
+      />
     </div>
+
+    {searchResults.length > 0 && (
+      <div className="absolute  w-full bg-gray-800 text-white shadow-lg rounded-b-lg mt-1 max-h-64 overflow-y-auto border border-gray-700">
+        {searchResults.map((exercise) => (
+          <div
+            key={exercise.id}
+            className="p-2 hover:bg-gray-700 cursor-pointer border-b border-gray-700 last:border-b-0"
+            onClick={() => handleExerciseSelect(exercise)}
+          >
+            <div className="font-semibold">{exercise.name}</div>
+            <div className="text-xs text-gray-400">{exercise.muscleGroup}</div>
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
   );
 };
 
@@ -115,31 +116,86 @@ const NavbarWorkout = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
 
-  return (
-    <nav className="bg-gray-900  w-screen text-white p-4 relative">
-      <div className="container mx-auto flex justify-between items-center">
-        <SearchBar />
-        <div className="hidden text-white  md:flex space-x-4">
-          {/* <Link to='/profile' className="block py-2 text-white hover:text-gray-300"><User/> profile</Link> */}
-          <h5>diets</h5>
-          {/* <h</h5> */}
-          {/* <Link to="/workouts" className="hover:text-gray-300">Workouts</Link>
-          <Link to="/diet" className="hover:text-gray-300">Diet</Link>
-          <Link to="/profile" className="hover:text-gray-300">Profile</Link> */
-          
-        }
+  return ( 
+    <nav className="bg-gradient-to-r from-black  to-black shadow-lg w-full p-2 text-white fixed top-0 z-50">
+      <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+        {/* Logo or Brand */}
+        <Link to="/" className="flex items-center no-underline text-white space-x-2 text-xl font-bold">
+          <Dumbbell className="h-6 w-6" />
+          <span>FitTrack</span>
+        </Link>
+
+        {/* Desktop Navigation */}
+        <div className="hidden md:flex items-center space-x-6">
+          <SearchBar />
+          <div className="flex items-center space-x-4">
+            <Link 
+              to="/workouts" 
+              className="flex items-center space-x-1 no-underline text-white hover:text-blue-300 transition-colors"
+            >
+              <Dumbbell className="h-5 w-5" />
+              <span>Workouts</span>
+            </Link>
+            <Link 
+              to="/diet" 
+              className="flex items-center space-x-1 no-underline text-white hover:text-green-300 transition-colors"
+            >
+              <Utensils className="h-5 w-5" />
+              <span>Diet</span>
+            </Link>
+            <Link 
+              to="/profile" 
+              className="flex items-center space-x-1 no-underline text-white hover:text-purple-300 transition-colors"
+            >
+              <User className="h-5 w-5" />
+              <span>Profile</span>
+            </Link>
+          </div>
         </div>
+
+        {/* Mobile Menu Toggle */}
         <div className="md:hidden">
-          <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="focus:outline-none">
-            {isMenuOpen ? <X /> : <Menu />}
+          <button 
+            onClick={() => setIsMenuOpen(!isMenuOpen)} 
+            className="focus:outline-none hover:text-gray-300 transition-colors"
+          >
+            {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
         </div>
       </div>
+
+      {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="md:hidden absolute  text-white top-full left-0 w-full bg-gray-800 p-4">
-          <Link to="/workouts" className="block py-2 text-white hover:text-gray-300">Workouts</Link>
-          <Link to="/diet" className="block py-2 hover:text-gray-300">Diet</Link>
-          <Link to="/profile" className="block py-2 hover:text-gray-300">Profile</Link>
+        <div className="md:hidden absolute top-full left-0 w-full bg-gray-800 shadow-lg">
+          <div className="container mx-auto px-4 py-4 space-y-2">
+            <SearchBar />
+            <div className="space-y-3 mt-4">
+              <Link 
+                to="/workouts" 
+                className="block py-2 flex items-center space-x-2 no-underline text-white  hover:bg-gray-700 rounded-md transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <Dumbbell className="h-5 w-5" />
+                <span>Workouts</span>
+              </Link>
+              <Link 
+                to="/diet" 
+                className="block py-2 flex items-center space-x-2 no-underline text-white hover:bg-gray-700 rounded-md transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <Utensils className="h-5 w-5" />
+                <span>Diet</span>
+              </Link>
+              <Link 
+                to="/profile" 
+                className="block py-2 flex items-center space-x-2 no-underline text-white hover:bg-gray-700 rounded-md transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <User className="h-5 w-5" />
+                <span>Profile</span>
+              </Link>
+            </div>
+          </div>
         </div>
       )}
     </nav>
@@ -182,49 +238,58 @@ const handleOpen=(exercise)=>{
   if (!workoutPlan) return <p>Error: Could not load workout plan.</p>;
 
   return (
-    <div className="flex justify-center w-screen items-center min-h-screen bg-gray-100 p-6">
-      <div className="bg-white rounded-lg shadow-2xl w-full max-w-6xl overflow-x-auto">
-        <div className='text-center font-bold text-2xl'>current workout plan</div>
-        <table className="w-full text-sm text-left text-gray-600">
-          <thead className="bg-gray-900 text-white uppercase">
-            <tr>
-              <th className="px-6 py-4">Day</th>
-              <th className="px-6 py-4">Exercise</th>
-              <th  className="px-6 py-4" >performance</th>
-              <th className="px-6 py-4">Sets</th>
-              <th className="px-6 py-4">Reps</th>
-            </tr>
-          </thead>
-          <tbody>
-            {workoutPlan.dailyWorkouts.map((workout, dayIndex) => (
-              <React.Fragment key={dayIndex}>
-                <tr className="bg-blue-50 font-bold">
-                  <td colSpan="4" className="px-6 py-4 text-black text-lg">
-                    {workout.day}
-                  </td>
-                </tr>
-                {workout.exercises.map((exercise, exerciseIndex) => (
-                  <tr key={exerciseIndex} className="border-b hover:bg-gray-50">
-                    {/* <button className="px-6 py-4 "onClick={handleOpen}> */}
-                    <td className=""></td>  
-                    <td className="px-6 py-4">{exercise.name}</td>
-                    <button 
-                      onClick={() => handleOpen(exercise.name)} 
-                      className="px-3  my-3 bg-gray-300 text-black rounded-lg shadow-lg hover:bg-gray-500 focus:outline-none  border-none transition-all"
+    <div className="flex justify-center w-screen items-center min-h-screen my-10 bg-black text-gray-200 p-6">
+    <div className="bg-gray-800 rounded-lg shadow-2xl w-full max-w-6xl overflow-x-auto">
+      <div className="flex justify-between items-center p-4">
+        <button className="bg-gradient-to-r from-indigo-600  to-purple-600 shadow-lg text-white px-4 py-2 rounded-lg shadow-lg hover:bg-blue-600 focus:outline-none">
+          Back to Exercise
+        </button>
+          {/* <button className="bg-gray-600 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-gray-500 focus:outline-none">
+            Another Button
+          </button> */}
+      </div>
+      <div className="text-center font-bold text-2xl text-white py-4">Current Workout Plan</div>
+      <table className="w-full text-sm text-left text-gray-300">
+        <thead className="bg-gray-700 text-gray-200 uppercase">
+          <tr>
+            <th className="px-6 py-4">Day</th>
+            <th className="px-6 py-4">Exercise</th>
+            <th className="px-6 py-4">Performance</th>
+            <th className="px-6 py-4">Sets</th>
+            <th className="px-6 py-4">Reps</th>
+          </tr>
+        </thead>
+        <tbody>
+          {workoutPlan.dailyWorkouts.map((workout, dayIndex) => (
+            <React.Fragment key={dayIndex}>
+              <tr className="bg-gray-700 text-gray-100 font-bold">
+                <td colSpan="5" className="px-6 py-4 text-lg">
+                  {workout.day}
+                </td>
+              </tr>
+              {workout.exercises.map((exercise, exerciseIndex) => (
+                <tr key={exerciseIndex} className="border-b border-gray-600 hover:bg-gray-700">
+                  <td className="px-6 py-4"></td>
+                  <td className="px-6 py-4">{exercise.name}</td>
+                  <td className="px-6 py-4">
+                    <button
+                      onClick={() => handleOpen(exercise.name)}
+                      className="px-3 py-2 bg-gradient-to-r from-indigo-400  to-purple-400 shadow-lg text-gray-200 rounded-lg shadow-lg hover:bg-gray-500 focus:outline-none border-none transition-all"
                     >
                       Add Performance
                     </button>
-                      <td className="px-6 py-4">{exercise.sets}</td>
-                    <td className="px-6 py-4">{exercise.reps}</td>
-                    {/* </button> */}
-                  </tr>
-                ))}
-              </React.Fragment>
-            ))}
-          </tbody>
-        </table>
-      </div>
+                  </td>
+                  <td className="px-6 py-4">{exercise.sets}</td>
+                  <td className="px-6 py-4">{exercise.reps}</td>
+                </tr>
+              ))}
+            </React.Fragment>
+          ))}
+        </tbody>
+      </table>
     </div>
+  </div>
+  
   );
 };
 
@@ -243,6 +308,8 @@ export default function WorkoutPage() {
   };
 
   return (
+    <div className='bg-black'>
+
     <SearchProvider>
       { <NavbarWorkout />} 
       <GetWorkoutPlan onOpenModal={openModal} />
@@ -250,8 +317,9 @@ export default function WorkoutPage() {
         exerciseName={exerciseName}
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-      />}
+        />}
     </SearchProvider>
+        </div>
  
   );
 }
