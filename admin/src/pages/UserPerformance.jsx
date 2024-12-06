@@ -102,7 +102,7 @@ const UserPerformance = ({
     <div className="fixed inset-0 bg-gradient-to-br from-indigo-50 to-indigo-100 flex justify-center items-center z-50 p-4">
       <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border-2 border-indigo-200">
         {/* Header */}
-        <div className="bg-indigo-600 text-white p-6 rounded-t-2xl flex justify-between items-center">
+        <div className="bg-amber-500 text-white p-6 rounded-t-2xl flex justify-between items-center">
           <h2 className="text-2xl font-bold">
             Performance - {selectedUser?.fullName || 'User'}
           </h2>
