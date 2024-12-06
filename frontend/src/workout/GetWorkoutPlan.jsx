@@ -24,7 +24,11 @@ const SearchProvider = ({ children }) => {
       const response = await axios.post(
         `${config.backendUrl}/get-exercises`,
         {},
-        { withCredentials: true }
+        { withCredentials: true,
+          headers: {
+            "ngrok-skip-browser-warning": "true" // Add the ngrok-specific header
+          }
+         }
       );
       setExercises(response.data.data || []);
       // console.log(response.data.data)
@@ -158,7 +162,11 @@ const handleOpen=(exercise)=>{
         const response = await axios.post(
           `${config.backendUrl}/get-user-workout-plan`,
           {},
-          { withCredentials: true }
+          { withCredentials: true,
+            headers: {
+              "ngrok-skip-browser-warning": "true" // Add the ngrok-specific header
+            }
+          }
         );
         setWorkoutPlan(response.data.data);
       } catch (err) {

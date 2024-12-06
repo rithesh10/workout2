@@ -42,6 +42,9 @@ const PerformanceModal = ({ exerciseName, isOpen, onClose }) => {
             sets
         },{
             withCredentials:true,
+            headers: {
+              "ngrok-skip-browser-warning": "true" // Add the ngrok-specific header
+            }
         })
         if(response.status==200)
         {

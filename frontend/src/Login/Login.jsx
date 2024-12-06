@@ -24,6 +24,9 @@ const LoginModal = ({ closeModal }) => {
         }, 
         {
           withCredentials: true, // Ensure cookies are included in the request
+          headers: {
+            "ngrok-skip-browser-warning": "true" // Add the ngrok-specific header
+          }
         }
       );
 

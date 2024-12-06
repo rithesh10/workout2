@@ -31,7 +31,11 @@ export default function WorkoutPlan() {
       const response = await axios.post(
         `${config.backendUrl}/generate`, // Replace with your backend URL
         formData,
-        { withCredentials: true }
+        { withCredentials: true,
+          headers: {
+            "ngrok-skip-browser-warning": "true" // Add the ngrok-specific header
+          }
+         }
       );
       console.log(response.data);
       console.log(response.data.data)

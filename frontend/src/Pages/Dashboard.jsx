@@ -17,28 +17,7 @@ import { Link } from "react-router-dom";
 const Dashboard = () => {
   // const [user, setUser] = useState(null);
   const [name,setName]=useState("");
-  // const [loading, setLoading] = useState(true);
-
-  // const getUser = async () => {
-  //     try {
-  //         const response = await axios.post(
-  //             'http://localhost:4000/api/v1/user/get-user',
-  //             {}, // Empty payload
-  //             { withCredentials: true } // Ensure cookies are sent
-  //         );
-  //         setUser(response.data.data); // Update the state with user data
-  //     } catch (err) {
-  //         console.error("Error fetching user:", err);
-  //         setUser(null); // Handle error by setting user to null
-  //     } finally {
-  //         setLoading(false); // Stop the loading spinner
-  //     }
-  // };
-
-  // useEffect(() => {
-  //     getUser(); // Fetch user data when the component mounts
-  // }, []);
-  // console.log(user)
+  
   let user={};
   useEffect(()=>{
     const storedData = localStorage.getItem("userData");

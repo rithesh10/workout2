@@ -31,7 +31,11 @@ export default function DietPlan() {
       const response = await axios.post(
         `${config.backendUrl}/generate-diet`, // Replace with your backend URL
         formData,
-        { withCredentials: true }
+        { withCredentials: true,
+          headers: {
+            "ngrok-skip-browser-warning": "true" // Add the ngrok-specific header
+          }
+         }
       );
 
       setDietPlan(response.data.data);

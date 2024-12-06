@@ -38,7 +38,11 @@ const UserProfile = () => {
       const response = await axios.post(
         `${config.backendUrl}/get-user`,
         {}, // Empty payload
-        { withCredentials: true } // Ensure cookies are sent
+        { withCredentials: true,
+          headers: {
+            "ngrok-skip-browser-warning": "true" // Add the ngrok-specific header
+          }
+         } // Ensure cookies are sent
       );
       setUser(response.data.data); // Update state with user data
     } catch (err) {
@@ -54,7 +58,11 @@ const UserProfile = () => {
       const response = await axios.post(
         `${config.backendUrl}/get-user-workout-plan`,
         {}, // Empty payload
-        { withCredentials: true } // Ensure cookies are sent
+        { withCredentials: true,
+          headers: {
+            "ngrok-skip-browser-warning": "true" // Add the ngrok-specific header
+          }
+         } // Ensure cookies are sent
       );
       setWorkout(response.data.data); // Update state with workout data
     } catch (err) {

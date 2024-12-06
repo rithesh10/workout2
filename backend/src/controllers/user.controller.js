@@ -5,16 +5,17 @@ import { ApiSuccess } from "../utils/ApiSuccess.js";
 import { uploadCloudinary } from "../utils/cloudinary.js";
 import { promises as fs } from "fs";
 import jwt from "jsonwebtoken";
-// const options = {
-//   httpOnly: true,
-//   secure: true,
-// };
 const options = {
   httpOnly: true,
-  secure: false, // In development, no HTTPS
-  sameSite: 'lax', // Allows same-site requests, suitable for development
-  path: '/', // Ensure this matches how the cookie was originally set
+  secure: true,
+  sameSite: 'none', // Allows same-site requests, suitable for development
 };
+// const options = {
+//   httpOnly: true,
+//   secure: false, // In development, no HTTPS
+//   sameSite: 'lax', // Allows same-site requests, suitable for development
+//   path: '/', // Ensure this matches how the cookie was originally set
+// };
 
 const generateAccessAndRefreshToken = async (userID) => {
   try {

@@ -12,7 +12,8 @@ import performanceRouter from "./routes/performance.routes.js";
 // import AdminLogin from "../../admin/src/components/AdminLogin.jsx";
 import AdminRouter from "./routes/Admin.routes.js";
 app.use(cors({
-    origin: ['http://localhost:5174', 'http://localhost:5173'],
+    origin: ['http://localhost:5174', 'http://localhost:5173','https://e500-2401-4900-658d-9d18-b1d0-7a95-eea9-b83.ngrok-free.app'],
+    // origin: ['https://e500-2401-4900-658d-9d18-b1d0-7a95-eea9-b83.ngrok-free.app'],
     credentials:true
 }));
 
