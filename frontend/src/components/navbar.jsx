@@ -1,30 +1,32 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { Home, Dumbbell, Apple, User, LogOut } from 'lucide-react';
+import { Home, Dumbbell, Apple, User, LogOut, Menu, X } from 'lucide-react';  // Import Menu and X icons for hamburger
+import { useState } from 'react';
 import axios from 'axios';
+import config from '../config/config';
 
 export default function Navbar() {
   const navigate = useNavigate();
+  const [isMenuOpen, setIsMenuOpen] = useState(false); // State for managing the mobile menu visibility
 
   const handleLogout = async () => {
     try {
-      const response = await axios.post('http://localhost:4000/api/v1/user/logout', {}, {
+      const response = await axios.post(`${config.backendUrl}/logout`, {}, {
         withCredentials: true,
       });
       console.log(response.data);
-      // Redirect to the login page after successful logout
       window.history.replaceState(null, '', '/');
+      localStorage.clear();
       document.cookie = "accessToken=; Max-Age=0; path=/";
       document.cookie = "refreshToken=; Max-Age=0; path=/";
       navigate('/login');
     } catch (error) {
       console.log(error);
-      // Optionally, add a message for failed logout
       alert('Logout failed. Please try again.');
     }
   };
 
   return (
-    <nav className="bg-black text-white shadow-lg">
+    <nav className="bg-black sticky z-50 top-0 text-white shadow-lg">
       <div className="container mx-auto px-6 sm:px-8 lg:px-10 py-4">
         <div className="flex items-center justify-between">
           {/* Logo and Brand Name */}
@@ -33,10 +35,18 @@ export default function Navbar() {
             <span className="font-semibold text-white text-2xl">FitTrack Pro</span>
           </Link>
 
-          {/* Navigation Links */}
-          <div className="flex no-underline items-center space-x-6">
+          {/* Mobile Hamburger Icon */}
+          <button 
+            onClick={() => setIsMenuOpen(!isMenuOpen)} 
+            className="lg:hidden text-white focus:outline-none"
+          >
+            {isMenuOpen ? <X className="h-6 bg-gray-900 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
+          
+          {/* Navigation Links - For Large Screens */}
+          <div className="hidden lg:flex no-underline items-center space-x-6">
             <NavLink to="/getWorkoutPlan" icon={<Dumbbell />} text="Workout" />
-            <NavLink to="/diet" icon={<Apple />} text="Diet" />
+            <NavLink to="/getDiet" icon={<Apple />} text="Diet" />
             <NavLink to="/profile" icon={<User />} text="Profile" />
 
             {/* Logout Button */}
@@ -49,6 +59,24 @@ export default function Navbar() {
             </button>
           </div>
         </div>
+        
+        {/* Mobile Navigation Links */}
+        {isMenuOpen && (
+          <div className="lg:hidden mt-4 space-y-4">
+            <NavLink to="/getWorkoutPlan" icon={<Dumbbell />} text="Workout" />
+            <NavLink to="/getDiet" icon={<Apple />} text="Diet" />
+            <NavLink to="/profile" icon={<User />} text="Profile" />
+
+            {/* Logout Button */}
+            <button
+              onClick={handleLogout}
+              className="flex items-center space-x-2 text-black hover:text-gray-300 rounded-md px-3 py-2 bg-white"
+            >
+              <LogOut className="h-5 w-5" />
+              <span>Logout</span>
+            </button>
+          </div>
+        )}
       </div>
     </nav>
   );

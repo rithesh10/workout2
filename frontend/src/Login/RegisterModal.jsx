@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { X, ChevronDown } from "lucide-react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import config from "../config/config";
 const url=import.meta.env.VITE_BACKEND_URL
 console.log(url);
 const RegisterModal = ({ closeModal }) => {
@@ -71,7 +72,7 @@ const RegisterModal = ({ closeModal }) => {
 
     try {
       const response = await axios.post(
-        `${url}/register`,
+        `${config.backendUrl}/register`,
         updatedFormdata,
         {
           headers: {
@@ -92,136 +93,145 @@ const RegisterModal = ({ closeModal }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg w-full max-w-md mx-4">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 text-center">
-            Register
-          </h2>
-          <button
-            onClick={closeModal}
-            className="text-gray-400 bg-white hover:bg-gray-100 p-2 rounded-md border-black focus:outline-none focus:ring-2 focus:ring-gray-200"
-          >
-            <X className="h-6 w-6" />
-          </button>
-        </div>
-
-        {error && <div className="text-red-500 mb-4">{error}</div>}
-
-        <form className="space-y-6" onSubmit={handleSubmit}>
-          <input
-            type="text"
-            placeholder="Full Name"
-            value={formdata.fullName}
-            onChange={(e) =>
-              setFormdata({ ...formdata, fullName: e.target.value })
-            }
-            className="w-full rounded-md bg-white border-2 p-2 hover:borderfocus:outline-none focus:ring-2 focus:border-transparent"
-          />
-
-          <input
-            type="email"
-            placeholder="Email"
-            value={formdata.email}
-            onChange={(e) =>
-              setFormdata({ ...formdata, email: e.target.value })
-            }
-            className="w-full rounded-md bg-white border-2 p-2 focus:outline-none focus:ring-2 focus:border-transparent"
-          />
-
-          <div className="relative flex w-full space-between">
-            <div className="relative">
-              <button
-                type="button"
-                className="flex items-center h-full px-3 border-2 border-r-0 rounded-l-md bg-white hover:bg-gray-50 focus:outline-none focus:ring-2"
-                onClick={() => setIsOpen(!isOpen)}
-              >
-                <span className="text-lg mr-1 font-normal">
-                  {selectedCountry.flag}
-                </span>
-                <span className="text-gray-700 mr-1">
-                  {selectedCountry.code}
-                </span>
-                <ChevronDown className="h-4 w-4 text-gray-400" />
-              </button>
-
-              {isOpen && (
-                <div className="absolute z-10 mt-1 left-0 w-64 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto">
-                  {countries.map((country) => (
-                    <button
-                      key={country.code}
-                      className="w-full px-4 py-2 text-left bg-white hover:bg-slate-600 hover:border-black border-2 flex items-center space-x-3 transition-all hover:text-white"
-                      onClick={() => {
-                        setSelectedCountry(country);
-                        setIsOpen(false);
-                      }}
-                    >
-                      <span className="text-gray-700">{country.flag}</span>
-                      <span className="text-gray-700">{country.code}</span>
-                      <span className="text-gray-500">{country.name}</span>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <input
-              type="tel"
-              placeholder="Phone number"
-              value={formdata.phone}
-              onChange={(e) =>
-                setFormdata({ ...formdata, phone: e.target.value })
-              }
-              className="flex-1 rounded-r-md bg-white border-2 border-l-0 p-2 focus:outline-none focus:ring-2 focus:border-transparent"
-            />
-          </div>
-
-          <div className="relative flex w-full">
-            <button
-              type="button"
-              className="flex items-center w-full px-3 py-2 border-2 border-gray-300 rounded-md bg-white hover:bg-gray-50 focus:outline-none"
-              onClick={() => setIsGenderOpen(!isGenderOpen)}
-            >
-              <span className="text-gray-700">{selectedGender}</span>
-              <ChevronDown className="h-4 w-4 text-gray-400 ml-auto" />
-            </button>
-
-            {isGenderOpen && (
-              <div className="absolute z-10 mt-1 left-0 w-full bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto">
-                {genders.map((gender) => (
-                  <button
-                    key={gender}
-                    className="w-full px-4 py-2 text-left bg-white hover:bg-slate-600"
-                    onClick={() => {
-                      setSelectedGender(gender); // Ensure gender is updated
-                      setIsGenderOpen(false); // Close the dropdown
-                    }}
-                  >
-                    {gender}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <input
-            type="password"
-            placeholder="Password"
-            value={formdata.password}
-            onChange={(e) =>
-              setFormdata({ ...formdata, password: e.target.value })
-            }
-            className="w-full rounded-md bg-white border-2 p-2 focus:outline-none focus:ring-2 focus:border-transparent"
-          />
-
-          <button
-            type="submit"
-            className="w-full py-2 bg-black text-white rounded-md hover:bg-black transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2"
-          >
-            Create Account
-          </button>
-        </form>
+    <div className="bg-gray-800 p-8 rounded-lg w-full max-w-md mx-4 shadow-xl">
+      {/* Modal Header */}
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold text-white">Register</h2>
+        <button
+          onClick={closeModal}
+          className="text-gray-300 hover:text-gray-100 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400"
+        >
+          <X className="h-6 w-6" />
+        </button>
       </div>
+  
+      {/* Error Message */}
+      {error && <div className="text-red-500 mb-4">{error}</div>}
+  
+      {/* Form */}
+      <form className="space-y-6" onSubmit={handleSubmit}>
+        {/* Full Name Input */}
+        <div>
+          <label htmlFor="fullName" className="block text-sm font-medium text-gray-400 mb-1">
+            Full Name
+          </label>
+          <input
+            id="fullName"
+            type="text"
+            placeholder="Enter your full name"
+            value={formdata.fullName}
+            onChange={(e) => setFormdata({ ...formdata, fullName: e.target.value })}
+            className="w-full rounded-md bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 p-2.5"
+          />
+        </div>
+  
+        {/* Email Input */}
+        <div>
+          <label htmlFor="email" className="block text-sm font-medium text-gray-400 mb-1">
+            Email Address
+          </label>
+          <input
+            id="email"
+            type="email"
+            placeholder="Enter your email"
+            value={formdata.email}
+            onChange={(e) => setFormdata({ ...formdata, email: e.target.value })}
+            className="w-full rounded-md bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 p-2.5"
+          />
+        </div>
+  
+        {/* Phone Number with Country Dropdown */}
+        <div className="relative flex items-center">
+          <button
+            type="button"
+            className="flex items-center px-3 border border-gray-600 rounded-l-md bg-gray-700 text-white hover:bg-gray-600 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            <span className="mr-1">{selectedCountry.flag}</span>
+            <span>{selectedCountry.code}</span>
+            <ChevronDown className="ml-2 h-4 w-4" />
+          </button>
+          <input
+            type="tel"
+            placeholder="Phone number"
+            value={formdata.phone}
+            onChange={(e) => setFormdata({ ...formdata, phone: e.target.value })}
+            className="flex-1 rounded-r-md bg-gray-700 border border-l-0 border-gray-600 text-white placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 p-2.5"
+          />
+        </div>
+        {isOpen && (
+          <div className="absolute z-10 mt-1 bg-gray-800 border border-gray-600 rounded-md shadow-lg max-h-60 overflow-y-auto">
+            {countries.map((country) => (
+              <button
+                key={country.code}
+                className="w-full px-4 py-2 text-left text-white hover:bg-indigo-500"
+                onClick={() => {
+                  setSelectedCountry(country);
+                  setIsOpen(false);
+                }}
+              >
+                <span>{country.flag}</span>
+                <span className="ml-2">{country.code}</span>
+                <span className="ml-4 text-gray-400">{country.name}</span>
+              </button>
+            ))}
+          </div>
+        )}
+  
+        {/* Gender Dropdown */}
+        <div className="relative">
+          <button
+            type="button"
+            className="w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-700 text-white flex justify-between items-center hover:bg-gray-600 focus:ring-2 focus:ring-indigo-500"
+            onClick={() => setIsGenderOpen(!isGenderOpen)}
+          >
+            {selectedGender || "Select Gender"}
+            <ChevronDown className="ml-2 h-4 w-4" />
+          </button>
+          {isGenderOpen && (
+            <div className="absolute z-10 mt-1 bg-gray-800 border border-gray-600 rounded-md shadow-lg max-h-60 overflow-y-auto w-full">
+              {genders.map((gender) => (
+                <button
+                  key={gender}
+                  className="w-full px-4 py-2 text-left text-white hover:bg-indigo-500"
+                  onClick={() => {
+                    setSelectedGender(gender);
+                    setIsGenderOpen(false);
+                  }}
+                >
+                  {gender}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+  
+        {/* Password Input */}
+        <div>
+          <label htmlFor="password" className="block text-sm font-medium text-gray-400 mb-1">
+            Password
+          </label>
+          <input
+            id="password"
+            type="password"
+            placeholder="Create a password"
+            value={formdata.password}
+            onChange={(e) => setFormdata({ ...formdata, password: e.target.value })}
+            className="w-full rounded-md bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 p-2.5"
+          />
+        </div>
+  
+        {/* Submit Button */}
+        <button
+          type="submit"
+          className="w-full py-2 bg-gradient-to-r from-indigo-600 to-purple-700 text-white rounded-md hover:opacity-90 focus:ring-2 focus:ring-indigo-500 transition-all transform hover:scale-105"
+        >
+          Create Account
+        </button>
+      </form>
     </div>
+  </div>
+  
   );
 };
 

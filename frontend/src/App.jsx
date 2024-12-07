@@ -15,7 +15,9 @@ import NavbarWorkout from "./workout/navbar";
 import JoinWorkout from "./workout/join";
 import WorkoutPage from "./workout/GetWorkoutPlan";
 import ExerciseDetail from "./workout/Exercise";
-
+import GetDietPlan from "./Diet/GetDietPlan";
+import PerformanceModal from "./workout/Performance";
+import Footer from "./components/Footer";
 
 const App = () => {
 
@@ -23,8 +25,12 @@ const App = () => {
     // <LandingPage/>
     <div>
       <BrowserRouter>
+      <div className="app-container flex flex-col min-h-screen">
+        {/* Main Content */}
+        <div className="flex-grow">
         <Routes>
           <Route path="/" element={<LandingPage />} />
+
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/login" element={<LoginModal />} />
           <Route path="/register" element={<RegisterModal />} />
@@ -38,9 +44,18 @@ const App = () => {
           {/* <Route path="/joinWorkout" element={<JoinWorkout/>}/> */}
           <Route path="/getWorkoutPlan" element={<WorkoutPage/>}/>
           <Route path="/getExercise" element={<ExerciseDetail/>}/>
+          <Route path="/getDiet" element={<GetDietPlan/>}/>
+          <Route path="/performance" element={<PerformanceModal/>}/>
         </Routes>
-      </BrowserRouter>
+              </div>
+
+      {/* Footer */}
+      <Footer />
+      </div>   
+   </BrowserRouter>
+      
     </div>
+    
   );
 };
 

@@ -35,7 +35,7 @@ const ExerciseModal = ({ isOpen, onClose, onSelectExercise }) => {
                 }}
               >
                 <div className="flex items-center">
-                  <Dumbbell className="w-5 h-5 text-blue-500 mr-3" />
+                  <Dumbbell className="w-5 h-5 text-gray-900 mr-3" />
                   <div className="text-left">
                     <h3 className="font-medium text-gray-800">{exercise.name}</h3>
                     <p className="text-sm text-gray-500">{exercise.description}</p>
@@ -117,27 +117,27 @@ const ExerciseTracker = () => {
         <div className="bg-white rounded-lg shadow-lg h-full">
           <div className="flex items-center justify-between p-4">
             <button
-              onClick={() => navigate('/dashboard')}
-              className="flex items-center text-gray-600 hover:text-gray-800 transition-colors"
+              onClick={() => navigate('/dash')}
+              className="flex items-center bg-white rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900 text-gray-600 hover:text-gray-800 transition-colors"
             >
               <ChevronLeft className="w-5 h-5 mr-1" />
               Back
             </button>
             <h1 className="text-2xl font-bold text-gray-800 flex items-center">
-              <Activity className="w-6 h-6 mr-2 text-blue-500" />
+              <Activity className="w-6 h-6 mr-2 text-gray-900" />
               Exercise Tracker
             </h1>
           </div>
 
           {!exercise ? (
             <div className="text-center py-12">
-              <Dumbbell className="w-16 h-16 text-blue-500 mx-auto mb-4" />
+              <Dumbbell className="w-16 h-16 text-gray-900 mx-auto mb-4" />
               <h2 className="text-xl font-semibold text-gray-800 mb-4">
                 Ready to start your workout?
               </h2>
               <button
                 onClick={() => setIsModalOpen(true)}
-                className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors"
+                className="text-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-900 transition-colors"
               >
                 Choose Exercise
               </button>
@@ -150,7 +150,7 @@ const ExerciseTracker = () => {
                 </h2>
                 <button
                   onClick={() => setIsModalOpen(true)}
-                  className="text-blue-500 hover:text-blue-600 transition-colors"
+                  className="text-gray-500 hover:text-gray-900 transition-colors"
                 >
                   Change Exercise
                 </button>

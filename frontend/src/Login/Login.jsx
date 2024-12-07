@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { X } from 'lucide-react';
+import config from '../config/config';
 import { useNavigate } from "react-router-dom"; // Import useNavigate
-const url=import.meta.env.VITE_BACKEND_URL
+// const url=import.meta.env.VITE_BACKEND_URL
 const LoginModal = ({ closeModal }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -16,18 +17,22 @@ const LoginModal = ({ closeModal }) => {
       setError(''); // Clear previous errors
 
       // Send login request
-      const response = await axios.post(`${url}/login`, 
+      const response = await axios.post(`${config.backendUrl}/login`, 
         {
           email,
           password
         }, 
         {
           withCredentials: true, // Ensure cookies are included in the request
+          headers: {
+            "ngrok-skip-browser-warning": "true" // Add the ngrok-specific header
+          }
         }
       );
 
       if (response.status === 200) {
         console.log('Login successful:', response.data);
+        localStorage.setItem('userData', JSON.stringify(response.data.data.user));
         
         // Close the modal on success
         // Redirect to the dashboard page after login
@@ -44,33 +49,64 @@ const LoginModal = ({ closeModal }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg w-full max-w-md mx-4">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 text-center">Login</h2>
-          <button onClick={closeModal} className="text-gray-400 bg-white hover:bg-gray-100 p-2 focus:outline-none focus:ring-0">
-            <X className="h-6 w-6" />
-          </button>
-        </div>
-        <form className="space-y-6" onSubmit={handleLogin}>
-          <input 
-            type="email" 
-            placeholder="Email" 
-            className="w-full rounded-md bg-white border-2 p-2" 
-            value={email} 
-            onChange={(e) => setEmail(e.target.value)} 
-          />
-          <input 
-            type="password" 
-            placeholder="Password" 
-            className="w-full rounded-md bg-white border-2   p-2" 
-            value={password} 
-            onChange={(e) => setPassword(e.target.value)} 
-          />
-          {error && <p className="text-red-500">{error}</p>}
-          <button type="submit" className="w-full py-2 bg-black text-white rounded-md">Log In</button>
-        </form>
-      </div>
+  <div className="bg-gray-800 p-8 rounded-lg w-full max-w-md mx-4 shadow-xl">
+    {/* Modal Header */}
+    <div className="flex justify-between items-center mb-6">
+      <h2 className="text-2xl font-bold text-white">Login</h2>
+      <button 
+        onClick={closeModal} 
+        className="text-gray-300 hover:text-gray-100 focus:outline-none"
+      >
+        <X className="h-6 w-6" />
+      </button>
     </div>
+    
+    {/* Form */}
+    <form className="space-y-5" onSubmit={handleLogin}>
+      {/* Email Input */}
+      <div>
+        {/* <label htmlFor="email" className="block text-sm font-medium text-gray-400 mb-1">
+          Email Address
+        </label> */}
+        <input 
+          id="email"
+          type="email"
+          placeholder="Enter your email" 
+          className="w-full rounded-md bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 p-2.5" 
+          value={email} 
+          onChange={(e) => setEmail(e.target.value)} 
+        />
+      </div>
+
+      {/* Password Input */}
+      <div>
+        {/* <label htmlFor="password" className="block text-sm font-medium text-gray-400 mb-1">
+          Password
+        </label> */}
+        <input 
+          id="password"
+          type="password"
+          placeholder="Enter your password" 
+          className="w-full rounded-md bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 p-2.5" 
+          value={password} 
+          onChange={(e) => setPassword(e.target.value)} 
+        />
+      </div>
+
+      {/* Error Message */}
+      {error && <p className="text-sm text-red-500">{error}</p>}
+
+      {/* Submit Button */}
+      <button 
+        type="submit" 
+        className="w-full py-2 bg-gradient-to-r from-indigo-600 to-purple-700 hover:opacity-90 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-transform transform hover:scale-105 text-white font-medium rounded-md"
+      >
+        Log In
+      </button>
+    </form>
+  </div>
+</div>
+
   );
 };
 

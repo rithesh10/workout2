@@ -109,11 +109,35 @@ const getUserDietPlans = async (req, res) => {
     const userId = req.user._id; // Assuming you have user information in req.user
     try {
         const DietPlans = await Diet.find({ user: userId });
-        return res.status(200).json(new ApiSuccess(200, DietPlans, "Retrieved diet plans successfully."));
+        const DietPlan=DietPlans[DietPlans.length-1];
+        return res.status(200).json(new ApiSuccess(200, DietPlan, "Retrieved diet plans successfully."));
     } catch (error) {
         return res.status(500).json(new ApiError(500, "Failed to retrieve diet plans."));
     }
 };
 
+const getDietPlan = asyncHandler(async(req,res)=>{
+  const userId = req.params.userId;
+  // console.log(" HEllo");
+  try {
+    const dietPlans = await Diet.find({ user: userId });
+    if (dietPlans.length === 0) {
+      throw new ApiError(
+        400,
+        "Invalid format returned from the workout generator",
+      );
+    }
+    const dietPlan = dietPlans[dietPlans.length-1];
 
-export { generateDietPlan,getUserDietPlans };
+    return res
+    .status(200)
+    .json(
+      new ApiSuccess(200, dietPlan, "DietPlan generated"),
+    );
+
+  } catch (error) {
+    
+  }
+})
+
+export { generateDietPlan,getUserDietPlans,getDietPlan };

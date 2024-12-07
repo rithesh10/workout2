@@ -8,6 +8,9 @@ import jwt from "jsonwebtoken";
 // const options = {
 //   httpOnly: true,
 //   secure: true,
+//   path:'/',
+//   domain:'.ngrok.io',
+//   sameSite: 'None', // Allows same-site requests, suitable for development
 // };
 const options = {
   httpOnly: true,
@@ -125,12 +128,13 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 
   const { accessToken, refreshToken } = tokens;
+  console.log(tokens)
 
   // console.log(data)
 
   // Fetch the logged-in user excluding sensitive fields
   const loggedInUser = await User.findById(user._id).select(
-    "-password -refreshToken",
+    "-password ",
   );
   console.log(loggedInUser)
 
@@ -149,7 +153,8 @@ const loginUser = asyncHandler(async (req, res) => {
         },
         "user logged in successfully",
       ),
-    );
+    )
+    ;
 });
 const logout = asyncHandler(async (req, res) => {
   // console.log(req.body)
@@ -286,6 +291,17 @@ const updateUserDetails = asyncHandler(async (req, res) => {
     .json(new ApiSuccess(200, user, "Successfully updated user details"));
 });
 
+const getAllUsers = asyncHandler(async(req,res)=>{
+  const users = await User.find()
+  if(!users){
+    throw new ApiError("Users not there");
+  }
+  return res
+    .status(200)
+    .json(new ApiSuccess(200, users, "Successfully updated user details"));
+
+})
+
 export {
   registerUser,
   loginUser,
@@ -294,5 +310,6 @@ export {
   logout,
   refreshAccessToken,
   updateUserDetails,
+  getAllUsers
   // updateProfilePic,
 };
