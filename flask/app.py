@@ -79,33 +79,218 @@ def generate_frames(exercise_type):
 
 def handle_left_bicep_curl(landmarks, image):
     global counter, stage
+    
+    # Extract landmark coordinates
     shoulder = [landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x, landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y]
     elbow = [landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].x, landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].y]
     wrist = [landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].x, landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].y]
-    angle = calculateAngle(shoulder, elbow, wrist)
-
-    # Display the angle on the video feed
-    cv2.putText(image, str(angle), tuple(np.multiply(elbow, [640, 480]).astype(int)),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2, cv2.LINE_AA)
-
-    # Curl counter logic for left bicep curl
-    if angle > 160:
+    hip = [landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].x, landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].y]
+    
+    # Calculate angles
+    arm_angle = calculateAngle(shoulder, elbow, wrist)
+    body_angle = calculateAngle([0, shoulder[1]], shoulder, hip)  # Vertical alignment
+    wrist_angle = calculateAngle(elbow, wrist, [wrist[0], wrist[1] + 0.1])  # For wrist alignment
+    
+    # Timer-based feedback stabilization
+    current_time = time.time()
+    if not hasattr(handle_left_bicep_curl, "feedback_timer"):
+        handle_left_bicep_curl.feedback_timer = current_time
+        handle_left_bicep_curl.feedback_message = ""
+        handle_left_bicep_curl.feedback_color = (255, 255, 255)  # Default white
+    
+    feedback_message = ""
+    feedback_color = (255, 255, 255)  # Default white
+    
+    # Form checking
+    if body_angle < 80 or body_angle > 100:
+        feedback_message = "Keep your back straight and engage your core!"
+        feedback_color = (0, 0, 255)  # Red
+    elif wrist_angle < 150:
+        feedback_message = "Keep your wrist straight to avoid injury."
+        feedback_color = (0, 0, 255)  # Red
+    elif abs(shoulder[0] - elbow[0]) > 0.1:
+        feedback_message = "Keep your elbow close to your torso for better efficiency."
+        feedback_color = (0, 0, 255)  # Red
+    
+    # Speed checking
+    if hasattr(handle_left_bicep_curl, "last_rep_time"):
+        rep_duration = current_time - handle_left_bicep_curl.last_rep_time
+        if rep_duration < 1.0:  # Too fast
+            feedback_message = "Slow down! Control the motion to maximize muscle engagement."
+            feedback_color = (0, 165, 255)  # Orange
+    
+    # Curl counter logic
+    if arm_angle > 160:
         stage = "down"
-    if angle < 30 and stage == 'down':
+        if feedback_message == "":
+            feedback_message = "Great! Start curling up slowly."
+            feedback_color = (0, 255, 0)  # Green
+    if arm_angle < 30 and stage == 'down':
         stage = "up"
         counter += 1
+        handle_left_bicep_curl.last_rep_time = current_time
+        feedback_message = f"Amazing! You've completed {counter} reps!"
+        feedback_color = (0, 255, 0)  # Green
+    
+        # Motivational prompts at milestones
+        if counter % 5 == 0:
+            feedback_message += " Keep going, you're smashing it!"
+        if counter % 10 == 0:
+            feedback_message += " You're unstoppable! Aim for the next 10 reps!"
+    
+    # Range of motion check
+    if 30 < arm_angle < 160 and stage == "down":
+        if arm_angle > 90:
+            feedback_message = "Make sure to complete the full range of motion for better results."
+            feedback_color = (0, 165, 255)  # Orange
 
-    # Status box for curl counter
+    # Stabilize feedback display for 3 seconds
+    if feedback_message:
+        if current_time - handle_left_bicep_curl.feedback_timer > 3:
+            handle_left_bicep_curl.feedback_timer = current_time
+        else:
+            feedback_message = handle_left_bicep_curl.feedback_message
+            feedback_color = handle_left_bicep_curl.feedback_color
+    else:
+        handle_left_bicep_curl.feedback_timer = current_time  # Reset timer for new feedback
+
+    # Update feedback
+    handle_left_bicep_curl.feedback_message = feedback_message
+    handle_left_bicep_curl.feedback_color = feedback_color
+
+    # Display angles and status
+    cv2.putText(image, f"Arm angle: {int(arm_angle)}", 
+                tuple(np.multiply(elbow, [640, 480]).astype(int)),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2, cv2.LINE_AA)
+    
+    # Status box for curl counter and stage
     cv2.rectangle(image, (0, 0), (225, 73), (245, 117, 16), -1)
     cv2.putText(image, 'REPS', (15, 12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
     cv2.putText(image, str(counter), (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 255), 2, cv2.LINE_AA)
     cv2.putText(image, 'STAGE', (65, 12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
     cv2.putText(image, stage, (60, 60), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 255), 2, cv2.LINE_AA)
-
+    
+    # Display feedback message
+    cv2.rectangle(image, (0, 80), (640, 120), (0, 0, 0), -1)
+    cv2.putText(image, feedback_message, (10, 110), 
+                cv2.FONT_HERSHEY_SIMPLEX, 1, feedback_color, 2, cv2.LINE_AA)
+    
+    # Draw pose landmarks
     mp_drawing.draw_landmarks(image, landmarks, mp_pose.POSE_CONNECTIONS,
-                              mp_drawing.DrawingSpec(color=(245, 117, 66), thickness=2, circle_radius=2),
-                              mp_drawing.DrawingSpec(color=(245, 66, 230), thickness=2, circle_radius=2))
+                            mp_drawing.DrawingSpec(color=(245, 117, 66), thickness=2, circle_radius=2),
+                            mp_drawing.DrawingSpec(color=(245, 66, 230), thickness=2, circle_radius=2))
+    
+    return image
 
+# Initialize the last rep time and feedback timer
+handle_left_bicep_curl.last_rep_time = time.time()
+handle_left_bicep_curl.feedback_timer = time.time()
+
+# def handle_left_bicep_curl(landmarks, image):
+#     global counter, stage
+#     shoulder = [landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x, landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y]
+#     elbow = [landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].x, landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].y]
+#     wrist = [landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].x, landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].y]
+#     angle = calculateAngle(shoulder, elbow, wrist)
+
+#     # Display the angle on the video feed
+#     cv2.putText(image, str(angle), tuple(np.multiply(elbow, [640, 480]).astype(int)),
+#                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2, cv2.LINE_AA)
+
+#     # Curl counter logic for left bicep curl
+#     if angle > 160:
+#         stage = "down"
+#     if angle < 30 and stage == 'down':
+#         stage = "up"
+#         counter += 1
+
+#     # Status box for curl counter
+#     cv2.rectangle(image, (0, 0), (225, 73), (245, 117, 16), -1)
+#     cv2.putText(image, 'REPS', (15, 12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
+#     cv2.putText(image, str(counter), (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 255), 2, cv2.LINE_AA)
+#     cv2.putText(image, 'STAGE', (65, 12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
+#     cv2.putText(image, stage, (60, 60), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 255), 2, cv2.LINE_AA)
+
+#     mp_drawing.draw_landmarks(image, landmarks, mp_pose.POSE_CONNECTIONS,
+#                               mp_drawing.DrawingSpec(color=(245, 117, 66), thickness=2, circle_radius=2),
+#                               mp_drawing.DrawingSpec(color=(245, 66, 230), thickness=2, circle_radius=2))
+
+
+# def handle_shoulder_press(landmarks, image):
+#     global counter, stage
+
+#     # Get coordinates for the left and right shoulder, elbow, and wrist
+#     left_shoulder = [landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x, landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y]
+#     left_elbow = [landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].x, landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].y]
+#     left_wrist = [landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].x, landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].y]
+    
+#     right_shoulder = [landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].x, landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].y]
+#     right_elbow = [landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value].x, landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value].y]
+#     right_wrist = [landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].x, landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].y]
+    
+#     # Calculate angles for both arms
+#     left_arm_angle = calculateAngle(left_shoulder, left_elbow, left_wrist)
+#     right_arm_angle = calculateAngle(right_shoulder, right_elbow, right_wrist)
+    
+#     # Display the angles on the video feed
+#     cv2.putText(image, f'Left: {int(left_arm_angle)}', tuple(np.multiply(left_elbow, [640, 480]).astype(int)),
+#                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2, cv2.LINE_AA)
+#     cv2.putText(image, f'Right: {int(right_arm_angle)}', tuple(np.multiply(right_elbow, [640, 480]).astype(int)),
+#                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2, cv2.LINE_AA)
+
+#     # Determine correctness (if arms are close to vertical when raised)
+#     correct_left_arm = 160 <= left_arm_angle <= 180  # 160-180 degrees is considered vertical
+#     correct_right_arm = 160 <= right_arm_angle <= 180
+
+#     # Check if the stage is "down" (arms lower than a certain threshold)
+#     if left_arm_angle < 30 and right_arm_angle < 30:
+#         stage = "down"
+#     # Check if the stage is "up" (arms raised correctly)
+#     if correct_left_arm and correct_right_arm and stage == "down":
+#         stage = "up"
+#         counter += 1
+
+#     # Set feedback color
+#     feedback_color = (0, 255, 0) if correct_left_arm and correct_right_arm else (0, 0, 255)  # Green for correct, red for incorrect
+    
+#     # # Display counter and stage
+#     # cv2.rectangle(image, (0, 0), (225, 73), (245, 117, 16), -1)
+#     # cv2.putText(image, 'REPS', (15, 12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
+#     # cv2.putText(image, str(counter), (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 255), 2, cv2.LINE_AA)
+#     # cv2.putText(image, 'STAGE', (65, 12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
+#     # cv2.putText(image, stage, (60, 60), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 255), 2, cv2.LINE_AA)
+
+#         # Display counter and stage
+#     # Draw background rectangle
+#     cv2.rectangle(image, (0, 0), (300, 100), (245, 117, 16), -1)
+
+#     # Display 'REPS' label
+#     cv2.putText(image, 'REPS', (15, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 0), 2, cv2.LINE_AA)
+
+#     # Display counter value
+#     cv2.putText(image, str(counter), (15, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 255, 255), 3, cv2.LINE_AA)
+
+#     # Display 'STAGE' label
+#     cv2.putText(image, 'STAGE', (160, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 0), 2, cv2.LINE_AA)
+
+#     # Display stage value
+#     cv2.putText(image, stage, (160, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 255, 255), 3, cv2.LINE_AA)
+
+
+#     # Check if form is incorrect and display an alert message
+#     if not (correct_left_arm and correct_right_arm):
+#         cv2.rectangle(image, (0, 80), (300, 130), (0, 0, 255), -1)  # Red box for alert
+#         cv2.putText(image, "Improper Form!", (10, 115),
+#                     cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2, cv2.LINE_AA)
+#         cv2.putText(image, "Correct your posture!", (10, 150),
+#                     cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2, cv2.LINE_AA)
+
+#     # Draw landmarks with feedback color for pose correction
+#     mp_drawing.draw_landmarks(
+#         image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS,
+#         mp_drawing.DrawingSpec(color=feedback_color, thickness=2, circle_radius=2),
+#         mp_drawing.DrawingSpec(color=(245, 66, 230), thickness=2, circle_radius=2)
+#     )
 
 def handle_shoulder_press(landmarks, image):
     global counter, stage
@@ -123,60 +308,52 @@ def handle_shoulder_press(landmarks, image):
     left_arm_angle = calculateAngle(left_shoulder, left_elbow, left_wrist)
     right_arm_angle = calculateAngle(right_shoulder, right_elbow, right_wrist)
     
-    # Display the angles on the video feed
-    cv2.putText(image, f'Left: {int(left_arm_angle)}', tuple(np.multiply(left_elbow, [640, 480]).astype(int)),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2, cv2.LINE_AA)
-    cv2.putText(image, f'Right: {int(right_arm_angle)}', tuple(np.multiply(right_elbow, [640, 480]).astype(int)),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2, cv2.LINE_AA)
-
-    # Determine correctness (if arms are close to vertical when raised)
-    correct_left_arm = 160 <= left_arm_angle <= 180  # 160-180 degrees is considered vertical
+    # Detailed form correction guidance
+    correction_messages = []
+    
+    # Vertical alignment check (160-180 degrees is considered vertical)
+    correct_left_arm = 160 <= left_arm_angle <= 180
     correct_right_arm = 160 <= right_arm_angle <= 180
-
-    # Check if the stage is "down" (arms lower than a certain threshold)
+    
+    # Comprehensive form checks
+    if left_arm_angle < 160:
+        correction_messages.append("Left arm not fully extended")
+    if right_arm_angle < 160:
+        correction_messages.append("Right arm not fully extended")
+    
+    # Symmetry check
+    angle_difference = abs(left_arm_angle - right_arm_angle)
+    if angle_difference > 20:
+        correction_messages.append("Arms not symmetrical")
+    
+    # Stage management
     if left_arm_angle < 30 and right_arm_angle < 30:
         stage = "down"
-    # Check if the stage is "up" (arms raised correctly)
+    
+    # Count repetition when arms are correctly raised
     if correct_left_arm and correct_right_arm and stage == "down":
         stage = "up"
         counter += 1
-
-    # Set feedback color
-    feedback_color = (0, 255, 0) if correct_left_arm and correct_right_arm else (0, 0, 255)  # Green for correct, red for incorrect
     
-    # # Display counter and stage
-    # cv2.rectangle(image, (0, 0), (225, 73), (245, 117, 16), -1)
-    # cv2.putText(image, 'REPS', (15, 12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
-    # cv2.putText(image, str(counter), (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 255), 2, cv2.LINE_AA)
-    # cv2.putText(image, 'STAGE', (65, 12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
-    # cv2.putText(image, stage, (60, 60), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 255), 2, cv2.LINE_AA)
-
-        # Display counter and stage
-    # Draw background rectangle
+    # Display detailed correction guidance
+    if correction_messages:
+        # Red background for error messages
+        cv2.rectangle(image, (0, 200), (300, 300), (0, 0, 255), -1)
+        
+        # Display correction messages
+        for i, message in enumerate(correction_messages[:3]):  # Limit to top 3 messages
+            cv2.putText(image, message, (10, 230 + i*30),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2, cv2.LINE_AA)
+    
+    # Display counter and stage (similar to previous implementation)
     cv2.rectangle(image, (0, 0), (300, 100), (245, 117, 16), -1)
-
-    # Display 'REPS' label
     cv2.putText(image, 'REPS', (15, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 0), 2, cv2.LINE_AA)
-
-    # Display counter value
     cv2.putText(image, str(counter), (15, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 255, 255), 3, cv2.LINE_AA)
-
-    # Display 'STAGE' label
     cv2.putText(image, 'STAGE', (160, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 0), 2, cv2.LINE_AA)
-
-    # Display stage value
     cv2.putText(image, stage, (160, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 255, 255), 3, cv2.LINE_AA)
-
-
-    # Check if form is incorrect and display an alert message
-    if not (correct_left_arm and correct_right_arm):
-        cv2.rectangle(image, (0, 80), (300, 130), (0, 0, 255), -1)  # Red box for alert
-        cv2.putText(image, "Improper Form!", (10, 115),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2, cv2.LINE_AA)
-        cv2.putText(image, "Correct your posture!", (10, 150),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2, cv2.LINE_AA)
-
-    # Draw landmarks with feedback color for pose correction
+    
+    # Draw landmarks
+    feedback_color = (0, 255, 0) if correct_left_arm and correct_right_arm else (0, 0, 255)
     mp_drawing.draw_landmarks(
         image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS,
         mp_drawing.DrawingSpec(color=feedback_color, thickness=2, circle_radius=2),
