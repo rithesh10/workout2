@@ -5,13 +5,16 @@ import { ApiSuccess } from "../utils/ApiSuccess.js";
 import { uploadCloudinary } from "../utils/cloudinary.js";
 import { promises as fs } from "fs";
 import jwt from "jsonwebtoken";
+// const domain = req.hostname.endsWith('.ngrok.io') ? '.ngrok.io' : 'localhost';
 // const options = {
-//   httpOnly: true,
-//   secure: true,
-//   path:'/',
-//   domain:'.ngrok.io',
-//   sameSite: 'None', // Allows same-site requests, suitable for development
+//   httpOnly: true,      // Ensures the cookie is not accessible via JavaScript (good for security).
+//   secure: true,        // Ensures the cookie is sent only over HTTPS (important for ngrok's HTTPS URLs).
+//   domain: '.ngrok-free.app',  // Makes the cookie available for all subdomains of ngrok-free.app.
+//   path: '/',           // The cookie will be accessible for all paths within the domain.
+//   sameSite: 'None',    // Allows the cookie to be sent in cross-site requests (important for cross-origin cookies with ngrok).
 // };
+
+
 const options = {
   httpOnly: true,
   secure: false, // In development, no HTTPS

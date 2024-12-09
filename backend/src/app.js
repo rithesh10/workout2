@@ -16,7 +16,7 @@ app.use(
         origin: [
             'http://localhost:5174',
             'http://localhost:5173',
-            'https://8a15-2409-40f0-1030-79f3-21e2-f970-5d00-1704.ngrok-free.app',
+            'https://7386-2401-4900-1c0f-620c-8cd7-c08b-3f67-bfaf.ngrok-free.app',
         ],
         credentials: true, // Enable sending cookies
     })
