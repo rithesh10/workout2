@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { X } from 'lucide-react';
 import config from '../config/config';
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { Link,useNavigate } from "react-router-dom"; // Import useNavigate
 // const url=import.meta.env.VITE_BACKEND_URL
 const LoginModal = ({ closeModal }) => {
   const [email, setEmail] = useState('');
@@ -24,14 +24,12 @@ const LoginModal = ({ closeModal }) => {
         }, 
         {
           withCredentials: true, // Ensure cookies are included in the request
-          headers: {
-            "ngrok-skip-browser-warning": "true" // Add the ngrok-specific header
-          }
+         
         }
       );
 
       if (response.status === 200) {
-        console.log('Login successful:', response.data);
+        console.log('Login successful:', response);
         localStorage.setItem('userData', JSON.stringify(response.data.data.user));
         
         // Close the modal on success
@@ -103,6 +101,7 @@ const LoginModal = ({ closeModal }) => {
       >
         Log In
       </button>
+      <Link to='/forget-password' > <span>Forgot password?</span>?</Link>
     </form>
   </div>
 </div>

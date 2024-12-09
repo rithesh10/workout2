@@ -74,11 +74,7 @@ const RegisterModal = ({ closeModal }) => {
       const response = await axios.post(
         `${config.backendUrl}/register`,
         updatedFormdata,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+       
       );
       console.log(response?.data)
 

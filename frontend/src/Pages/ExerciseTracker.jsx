@@ -89,15 +89,19 @@ const ExerciseTracker = () => {
   };
 
   const resetCounter = async () => {
-    try {
-      const response = await fetch('http://127.0.0.1:8000/reset_counter', { method: 'POST' });
-      if (!response.ok) {
-        alert('Error: Could not reset counter.');
-      }
-    } catch (error) {
-      console.error('Error resetting counter:', error);
+  try {
+    const response = await fetch('http://127.0.0.1:8000/reset_counter', { method: 'POST' });
+    if (!response.ok) {
+      alert('Error: Could not reset counter.');
+    } else {
+      const data = await response.json();
+      console.log(data.message); // Log the success message
+      alert('Counter has been reset to 0!'); // Optional user feedback
     }
-  };
+  } catch (error) {
+    console.error('Error resetting counter:', error);
+  }
+};
 
   useEffect(() => {
     return () => {

@@ -26,9 +26,7 @@ const SearchProvider = ({ children }) => {
         `${config.backendUrl}/get-exercises`,
         {},
         { withCredentials: true,
-          headers: {
-            "ngrok-skip-browser-warning": "true" // Add the ngrok-specific header
-          }
+         
          }
       );
       setExercises(response.data.data || []);
@@ -219,9 +217,7 @@ const handleOpen=(exercise)=>{
           `${config.backendUrl}/get-user-workout-plan`,
           {},
           { withCredentials: true,
-            headers: {
-              "ngrok-skip-browser-warning": "true" // Add the ngrok-specific header
-            }
+            
           }
         );
         setWorkoutPlan(response.data.data);
