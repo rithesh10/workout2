@@ -32,9 +32,7 @@ export default function WorkoutPlan() {
         `${config.backendUrl}/generate`, // Replace with your backend URL
         formData,
         { withCredentials: true,
-          headers: {
-            "ngrok-skip-browser-warning": "true" // Add the ngrok-specific header
-          }
+          
          }
       );
       console.log(response.data);

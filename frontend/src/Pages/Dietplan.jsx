@@ -32,9 +32,7 @@ export default function DietPlan() {
         `${config.backendUrl}/generate-diet`, // Replace with your backend URL
         formData,
         { withCredentials: true,
-          headers: {
-            "ngrok-skip-browser-warning": "true" // Add the ngrok-specific header
-          }
+          
          }
       );
 

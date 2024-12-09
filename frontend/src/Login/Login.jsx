@@ -24,14 +24,12 @@ const LoginModal = ({ closeModal }) => {
         }, 
         {
           withCredentials: true, // Ensure cookies are included in the request
-          headers: {
-            "ngrok-skip-browser-warning": "true" // Add the ngrok-specific header
-          }
+         
         }
       );
 
       if (response.status === 200) {
-        console.log('Login successful:', response.data);
+        console.log('Login successful:', response);
         localStorage.setItem('userData', JSON.stringify(response.data.data.user));
         
         // Close the modal on success

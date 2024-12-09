@@ -3,6 +3,7 @@ import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiSuccess } from "../utils/ApiSuccess.js";
 import { uploadCloudinary } from "../utils/cloudinary.js";
+import nodemailer from 'nodemailer';
 import { promises as fs } from "fs";
 import jwt from "jsonwebtoken";
 // const options = {
@@ -302,6 +303,104 @@ const getAllUsers = asyncHandler(async(req,res)=>{
 
 })
 
+let otpStore = {};
+
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: "saimadhav9235@gmail.com",
+    pass: "lxud qyuj mxly rljw",
+  },
+});
+
+const forgotPassword = asyncHandler(async (req, res) => {
+  try {
+    const user = await User.findOne(req.user?._id);
+    console.log(user);
+
+    // If user is not found
+    if (!user) {
+      return res.status(404).json({ message: "User Not found" });
+    }
+
+    const email = user.email;
+
+    // Generate a 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000);
+    otpStore[email] = otp;
+
+    // Email options
+    const mailOptions = {
+      from: "saimadhav9235@gmail.com",
+      to: email,
+      subject: "Your OTP Code",
+      text: `Your OTP code is ${otp}`,
+    };
+
+    // Send the email
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error("Error sending email:", error);
+        return res
+          .status(500)
+          .json({ message: "Error sending email", error });
+      }
+
+      // If successful, send a response
+      res.status(200).json({ message: "OTP sent successfully" });
+    });
+
+    console.log(otpStore);
+
+    // Verify transporter configuration
+    transporter.verify((error, success) => {
+      if (error) {
+        console.error("Error with transporter:", error);
+      } else {
+        console.log("Server is ready to send emails:", success);
+      }
+    });
+  } catch (error) {
+    console.error("Forgot Password Error:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+const verifyOtp = asyncHandler(async(req,res)=>{
+  const {otp } = req.body;
+  const user=await User.findOne(req.user?._id)
+  if(!user){
+    return res.status(404).json({message:"User Not found"})
+  }
+  const email=user.email;
+  console.log(email,otp)
+  if (otpStore[email] && otpStore[email] == otp) {
+    delete otpStore[email]; // OTP can only be used once
+    return res.status(200).json({ message: "OTP verified successfully" });
+  }
+  res.status(400).json({ message: "Invalid OTP" });
+
+})
+
+const resetPassword = asyncHandler(async(req,res)=>{
+  const {password } = req.body;
+  if (!password) {
+    return res.status(400).json({ message: "Password is required" });
+  }
+  const user=await User.findOne(req.user?._id)
+  if(!user){
+    return res.status(404).json({message:"User Not found"})
+  }
+
+  // const hashedPassword = await bcrypt.hash(password,10);
+  user.password = password;
+  await user.save();
+
+  res.status(200).json({ message: "Password reset successfully" });
+
+})
+
+
 export {
   registerUser,
   loginUser,
@@ -310,6 +409,9 @@ export {
   logout,
   refreshAccessToken,
   updateUserDetails,
-  getAllUsers
+  getAllUsers,
+  forgotPassword,
+  verifyOtp,
+  resetPassword
   // updateProfilePic,
 };

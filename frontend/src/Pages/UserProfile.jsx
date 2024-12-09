@@ -59,9 +59,7 @@ const UserProfile = () => {
         `${config.backendUrl}/get-user-workout-plan`,
         {}, // Empty payload
         { withCredentials: true,
-          headers: {
-            "ngrok-skip-browser-warning": "true" // Add the ngrok-specific header
-          }
+         
          } // Ensure cookies are sent
       );
       setWorkout(response.data.data); // Update state with workout data
@@ -104,9 +102,7 @@ const UserProfile = () => {
     try {
       await axios.post(`${config.backendUrl}/change-user-details`,userData,{
           withCredentials:true,
-          headers: {
-            'Content-Type': 'application/json'  // Ensure the backend expects JSON
-          }
+         
         },
       )
     alert("Updated Successfully");
