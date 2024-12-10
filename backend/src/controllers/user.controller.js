@@ -132,7 +132,7 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 
   const { accessToken, refreshToken } = tokens;
-  console.log(tokens)
+  // console.log(tokens)
 
   // console.log(data)
 
@@ -140,7 +140,7 @@ const loginUser = asyncHandler(async (req, res) => {
   const loggedInUser = await User.findById(user._id).select(
     "-password ",
   );
-  console.log(loggedInUser)
+  // console.log(loggedInUser)
 
   // Set cookies and send response
   return res
@@ -420,10 +420,40 @@ const resetPassword = asyncHandler(async(req,res)=>{
   res.status(200).json({ message: "Password reset successfully" });
 
 })
+const updateUserByAdmin=asyncHandler(async(req,res)=>{
+  const data = req.body;
+  try {
+    const user = await User.findByIdAndUpdate(data.id, data, { new: true }); // Update and return the updated document
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    // console.log("hi");
+    return res.status(200).json({ message: "updated user", user });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "failed at server", err });
+  }
+})
+const deleteUserByAdmin=asyncHandler(async(req,res)=>{
+  const data=req.body;
+  try{
+    const user=await User.findByIdAndDelete(data.id);
+    if(!user){
+      res.status(404).json({"message":"user not found"});
+    }
+    res.status(200).json({"message":"deleted",user});
+
+  }catch(err){
+    console.log(err);
+    res.status(500).json({"message":"internal server error"});
+  }
+})
 
 
 export {
   registerUser,
+  deleteUserByAdmin,
   loginUser,
   changePassword,
   getCurrentUser,
@@ -432,6 +462,7 @@ export {
   updateUserDetails,
   getAllUsers,
   forgotPassword,
+  updateUserByAdmin,
   verifyOtp,
   resetPassword
   // updateProfilePic,

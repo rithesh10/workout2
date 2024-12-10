@@ -18,7 +18,7 @@ export default function Navbar() {
       localStorage.clear();
       document.cookie = "accessToken=; Max-Age=0; path=/";
       document.cookie = "refreshToken=; Max-Age=0; path=/";
-      navigate('/login');
+      navigate('/');
     } catch (error) {
       console.log(error);
       alert('Logout failed. Please try again.');

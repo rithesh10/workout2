@@ -81,7 +81,7 @@ const UserProfile = () => {
   };
   const handleDeleteSubmit=async()=>{
     try{
-      const response=await axios.post("http://localhost:4000/del",formData);
+      const response=await axios.post(`${config.BACKEND_URL}/del`,formData);
       if(response.data){
         alert("deleted");
         setUsers((prevUsers) => prevUsers.filter((user) => user.id !== formData.id));
