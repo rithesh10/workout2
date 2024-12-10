@@ -3,19 +3,25 @@ import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiSuccess } from "../utils/ApiSuccess.js";
 import { uploadCloudinary } from "../utils/cloudinary.js";
+import nodemailer from 'nodemailer';
 import { promises as fs } from "fs";
 import jwt from "jsonwebtoken";
+// const domain = req.hostname.endsWith('.ngrok.io') ? '.ngrok.io' : 'localhost';
+// const options = {
+//   httpOnly: true,      // Ensures the cookie is not accessible via JavaScript (good for security).
+//   secure: true,        // Ensures the cookie is sent only over HTTPS (important for ngrok's HTTPS URLs).
+//   domain: '.ngrok-free.app',  // Makes the cookie available for all subdomains of ngrok-free.app.
+//   path: '/',           // The cookie will be accessible for all paths within the domain.
+//   sameSite: 'None',    // Allows the cookie to be sent in cross-site requests (important for cross-origin cookies with ngrok).
+// };
+
+
 const options = {
   httpOnly: true,
-  secure: true,
-  sameSite: 'none', // Allows same-site requests, suitable for development
+  secure: false, // In development, no HTTPS
+  sameSite: 'lax', // Allows same-site requests, suitable for development
+  path: '/', // Ensure this matches how the cookie was originally set
 };
-// const options = {
-//   httpOnly: true,
-//   secure: false, // In development, no HTTPS
-//   sameSite: 'lax', // Allows same-site requests, suitable for development
-//   path: '/', // Ensure this matches how the cookie was originally set
-// };
 
 const generateAccessAndRefreshToken = async (userID) => {
   try {
@@ -126,12 +132,13 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 
   const { accessToken, refreshToken } = tokens;
+  console.log(tokens)
 
   // console.log(data)
 
   // Fetch the logged-in user excluding sensitive fields
   const loggedInUser = await User.findById(user._id).select(
-    "-password -refreshToken",
+    "-password ",
   );
   console.log(loggedInUser)
 
@@ -150,7 +157,8 @@ const loginUser = asyncHandler(async (req, res) => {
         },
         "user logged in successfully",
       ),
-    );
+    )
+    ;
 });
 const logout = asyncHandler(async (req, res) => {
   // console.log(req.body)
@@ -298,6 +306,122 @@ const getAllUsers = asyncHandler(async(req,res)=>{
 
 })
 
+let otpStore = {};
+
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: "saimadhav9235@gmail.com",
+    pass: "lxud qyuj mxly rljw",
+  },
+});
+
+const forgotPassword = asyncHandler(async (req, res) => {
+  try {
+    const {email} =req.body;
+    const user = await User.findOne({email:email});
+    console.log(user);
+
+    // If user is not found
+    if (!user) {
+      return res.status(404).json({ message: "User Not found" });
+    }
+
+    // email = user.email; 
+
+    // Generate a 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000);
+    otpStore[email] = otp;
+
+    // Email options
+    const mailOptions = {
+      from: "saimadhav9235@gmail.com",
+      to: email,
+      subject: "Your OTP Code",
+      text: `Your OTP code is ${otp}`,
+    };
+
+    // Send the email
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error("Error sending email:", error);
+        return res
+          .status(500)
+          .json({ message: "Error sending email", error });
+      }
+
+      // If successful, send a response
+      res.status(200).json({ message: "OTP sent successfully" });
+    });
+
+    console.log(otpStore);
+
+    // Verify transporter configuration
+    transporter.verify((error, success) => {
+      if (error) {
+        console.error("Error with transporter:", error);
+      } else {
+        console.log("Server is ready to send emails:", success);
+      }
+    });
+  } catch (error) {
+    console.error("Forgot Password Error:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+const verifyOtp = asyncHandler(async(req,res)=>{
+  const {email,otp } = req.body;
+  const user=await User.findOne({email})
+  if(!user){
+    return res.status(404).json({message:"User Not found"})
+  }
+  const tokens = await generateAccessAndRefreshToken(user._id);
+  // console.log("Tokens returned from generateAccessAndRefreshToken:", tokens); // Log tokens
+
+  // Check if tokens are correctly returned
+  if (!tokens) {
+    throw new ApiError(500, "Failed to generate tokens");
+  }
+
+  const { accessToken, refreshToken } = tokens;
+  console.log(tokens)
+  // email=user.email;
+  console.log(email,otp)
+  if (otpStore[email] && otpStore[email] == otp) {
+    delete otpStore[email]; // OTP can only be used once
+    return res.status(200)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options) 
+    .json(new ApiSuccess(200,{
+      user:user}, "OTP verified successfully" ));
+  }
+  else{
+    
+  return res.status(400).json({ message: "Invalid OTP" });
+  }
+
+})
+
+const resetPassword = asyncHandler(async(req,res)=>{
+  const {password } = req.body;
+  if (!password) {
+    return res.status(400).json({ message: "Password is required" });
+  }
+  const user=await User.findOne(req.user?._id)
+  if(!user){
+    return res.status(404).json({message:"User Not found"})
+  }
+
+  // const hashedPassword = await bcrypt.hash(password,10);
+  user.password = password;
+  await user.save({ validateBeforeSave: false });
+
+  res.status(200).json({ message: "Password reset successfully" });
+
+})
+
+
 export {
   registerUser,
   loginUser,
@@ -306,6 +430,9 @@ export {
   logout,
   refreshAccessToken,
   updateUserDetails,
-  getAllUsers
+  getAllUsers,
+  forgotPassword,
+  verifyOtp,
+  resetPassword
   // updateProfilePic,
 };

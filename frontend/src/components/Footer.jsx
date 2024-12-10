@@ -4,7 +4,7 @@ import { Facebook, Instagram, Twitter, Mail, Phone } from 'lucide-react';
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-900 text-white py-12 px-4">
+    <footer className="bg-black text-white py-12 px-4">
       <div className="container mx-auto grid md:grid-cols-2 gap-8">
         {/* Company Info */}
         <div>
@@ -63,38 +63,7 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* App Download Links */}
-        {/* <div>
-          <h4 className="text-lg font-semibold mb-4">Download Our App</h4>
-          <div className="flex space-x-4">
-            <a
-              href="https://play.google.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-white text-black px-4 py-2 rounded-lg flex items-center hover:bg-gray-200 transition-colors"
-            >
-              <img
-                src="/path/to/google-play-icon.png" // Replace with an actual path
-                alt="Google Play"
-                className="mr-2 w-6 h-6"
-              />
-              Google Play
-            </a>
-            <a
-              href="https://www.apple.com/app-store/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-white text-black px-4 py-2 rounded-lg flex items-center hover:bg-gray-200 transition-colors"
-            >
-              <img
-                src="/path/to/app-store-icon.png" // Replace with an actual path
-                alt="App Store"
-                className="mr-2 w-6 h-6"
-              />
-              App Store
-            </a>
-          </div>
-        </div> */}
+        
       </div>
 
       {/* Bottom Copyright */}
