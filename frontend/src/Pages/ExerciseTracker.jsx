@@ -1,216 +1,144 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { 
-  Activity, 
-  Play, 
-  Square, 
-  RefreshCw, 
-  ChevronLeft,
-  Dumbbell
-} from 'lucide-react';
-
-const exercises = [
-  { id: 1, name: 'leftbicep_curl', description: 'Upper body strength exercise' },
-  { id: 2, name: 'rightbicep_curl', description: 'Lower body compound exercise' },
-  { id: 3, name: 'Lunges', description: 'Lower body unilateral exercise' },
-  { id: 4, name: 'Plank', description: 'Core stability exercise' }
-];
-
-const ExerciseModal = ({ isOpen, onClose, onSelectExercise }) => {
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 bg-black w-screen overflow-x-hidden bg-opacity-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
-        <div className="p-6">
-          <h2 className="text-2xl font-bold mb-4 text-gray-800">Select Exercise</h2>
-          <div className="space-y-4">
-            {exercises.map((exercise) => (
-              <button
-                key={exercise.id}
-                className="w-full p-4 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-between group"
-                onClick={() => {
-                  onSelectExercise(exercise.name.toLowerCase());
-                  onClose();
-                }}
-              >
-                <div className="flex items-center">
-                  <Dumbbell className="w-5 h-5 text-gray-900 mr-3" />
-                  <div className="text-left">
-                    <h3 className="font-medium text-gray-800">{exercise.name}</h3>
-                    <p className="text-sm text-gray-500">{exercise.description}</p>
-                  </div>
-                </div>
-              </button>
-            ))}
-          </div>
-          <button
-            className="mt-6 w-full p-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors"
-            onClick={onClose}
-          >
-            Cancel
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
+import React, { useState } from "react";
 
 const ExerciseTracker = () => {
-  const navigate = useNavigate();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [exercise, setExercise] = useState(null);
-  const [isCameraRunning, setIsCameraRunning] = useState(false);
+  const [exerciseType, setExerciseType] = useState("");
+  const [videoStreamUrl, setVideoStreamUrl] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isRunning, setIsRunning] = useState(false);
 
   const startCamera = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:8000/start_camera', { method: 'POST' });
+      const response = await fetch("http://localhost:8000/start_camera", {
+        method: "POST",
+      });
+      const data = await response.json();
+
       if (response.ok) {
-        setIsCameraRunning(true);
+        setIsRunning(true);
+        setErrorMessage("");
       } else {
-        alert('Error: Could not start camera.');
+        setErrorMessage(data.error || "Failed to start camera");
       }
     } catch (error) {
-      console.error('Error starting camera:', error);
+      setErrorMessage("Error starting the camera: " + error.message);
     }
   };
 
   const stopCamera = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:8000/stop_camera', { method: 'POST' });
+      const response = await fetch("http://localhost:8000/stop_camera", {
+        method: "POST",
+      });
+      const data = await response.json();
+
       if (response.ok) {
-        setIsCameraRunning(false);
+        setIsRunning(false);
+        setExerciseType("");
+        setVideoStreamUrl("");
+        setErrorMessage("");
       } else {
-        alert('Error: Could not stop camera.');
+        setErrorMessage(data.error || "Failed to stop camera");
       }
     } catch (error) {
-      console.error('Error stopping camera:', error);
+      setErrorMessage("Error stopping the camera: " + error.message);
     }
   };
 
   const resetCounter = async () => {
-  try {
-    const response = await fetch('http://127.0.0.1:8000/reset_counter', { method: 'POST' });
-    if (!response.ok) {
-      alert('Error: Could not reset counter.');
-    } else {
+    try {
+      const response = await fetch("http://localhost:8000/reset_counter", {
+        method: "POST",
+      });
       const data = await response.json();
-      console.log(data.message); // Log the success message
-      alert('Counter has been reset to 0!'); // Optional user feedback
-    }
-  } catch (error) {
-    console.error('Error resetting counter:', error);
-  }
-};
 
-  useEffect(() => {
-    return () => {
-      if (isCameraRunning) {
-        stopCamera();
+      if (!response.ok) {
+        setErrorMessage(data.error || "Failed to reset counters");
+      } else {
+        setErrorMessage("");
       }
-    };
-  }, [isCameraRunning]);
+    } catch (error) {
+      setErrorMessage("Error resetting counters: " + error.message);
+    }
+  };
+
+  const selectExercise = (type) => {
+    setExerciseType(type);
+    setVideoStreamUrl(`http://localhost:8000/${type}`);
+  };
 
   return (
-    <div className="min-h-screen w-screen overflow-x-hidden bg-gray-50">
-      <div className="w-full h-full p-4">
-        <div className="bg-white rounded-lg shadow-lg h-full">
-          <div className="flex items-center justify-between p-4">
+    <div className="flex flex-col min-h-screen w-screen overflow-x-hidden items-center  h-screen bg-black p-4">
+      <h1 className="text-4xl font-bold text-white mb-4">Exercise Tracker</h1>
+      {errorMessage && (
+        <p className="text-red-500 text-sm font-semibold">{errorMessage}</p>
+      )}
+      <div className="flex flex-col items-center  bg-gray-700 shadow-lg rounded-lg p-6 w-full max-w-md">
+        {!isRunning ? (
+          <button
+            onClick={startCamera}
+            className="bg-blue-500 text-white px-4 py-2 rounded-md bg-gradient-to-r from-indigo-600 to-purple-700 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-700"
+          >
+            Start Camera
+          </button>
+        ) : (
+          <button
+            onClick={stopCamera}
+            className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition"
+          >
+            Stop Camera
+          </button>
+        )}
+        {isRunning && (
+          <>
             <button
-              onClick={() => navigate('/dash')}
-              className="flex items-center bg-white rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900 text-gray-600 hover:text-gray-800 transition-colors"
+              onClick={resetCounter}
+              className="mt-4 bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600 transition"
             >
-              <ChevronLeft className="w-5 h-5 mr-1" />
-              Back
+              Reset Counters
             </button>
-            <h1 className="text-2xl font-bold text-gray-800 flex items-center">
-              <Activity className="w-6 h-6 mr-2 text-gray-900" />
-              Exercise Tracker
-            </h1>
-          </div>
-
-          {!exercise ? (
-            <div className="text-center py-12">
-              <Dumbbell className="w-16 h-16 text-gray-900 mx-auto mb-4" />
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">
-                Ready to start your workout?
-              </h2>
+            <div className="flex flex-wrap justify-center mt-4 gap-2">
               <button
-                onClick={() => setIsModalOpen(true)}
-                className="text-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-900 transition-colors"
+                onClick={() => selectExercise("left_bicep_curl")}
+                className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition"
               >
-                Choose Exercise
+                Left Bicep Curl
+              </button>
+              <button
+                onClick={() => selectExercise("right_bicep_curl")}
+                className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition"
+              >
+                Right Bicep Curl
+              </button>
+              <button
+                onClick={() => selectExercise("squat")}
+                className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition"
+              >
+                Squat
+              </button>
+              <button
+                onClick={() => selectExercise("shoulder_press")}
+                className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition"
+              >
+                Shoulder Press
               </button>
             </div>
-          ) : (
-            <div className="flex flex-col h-[calc(100vh-120px)]">
-              <div className="flex items-center justify-between px-4 py-2">
-                <h2 className="text-xl font-semibold text-gray-800">
-                  Exercise: {exercise}
-                </h2>
-                <button
-                  onClick={() => setIsModalOpen(true)}
-                  className="text-gray-500 hover:text-gray-900 transition-colors"
-                >
-                  Change Exercise
-                </button>
-              </div>
-
-              <div className="flex justify-center space-x-4 px-4 py-2">
-                <button
-                  onClick={startCamera}
-                  disabled={isCameraRunning}
-                  className={`flex items-center px-4 py-2 rounded-lg ${
-                    isCameraRunning
-                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                      : 'bg-green-500 text-white hover:bg-green-600'
-                  } transition-colors`}
-                >
-                  <Play className="w-5 h-5 mr-2" />
-                  Start
-                </button>
-                <button
-                  onClick={stopCamera}
-                  disabled={!isCameraRunning}
-                  className={`flex items-center px-4 py-2 rounded-lg ${
-                    !isCameraRunning
-                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                      : 'bg-red-500 text-white hover:bg-red-600'
-                  } transition-colors`}
-                >
-                  <Square className="w-5 h-5 mr-2" />
-                  Stop
-                </button>
-                <button
-                  onClick={resetCounter}
-                  className="flex items-center px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
-                >
-                  <RefreshCw className="w-5 h-5 mr-2" />
-                  Reset
-                </button>
-              </div>
-
-              {isCameraRunning && (
-                <div className="flex-1 p-4">
-                  <div className="relative w-full h-full rounded-lg overflow-hidden border-2 border-gray-200">
-                    <img
-                      src={`http://127.0.0.1:8000/${exercise}`}
-                      alt="Video Feed"
-                      className="absolute inset-0 w-full h-full object-contain"
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
+          </>
+        )}
       </div>
-
-      <ExerciseModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSelectExercise={setExercise}
-      />
+      {isRunning && exerciseType && (
+        <div className="mt-6 bg-gray-700 shadow-lg rounded-lg p-4 w-full max-w-lg">
+          <h2 className="text-lg font-semibold text-gray-800 mb-2">
+            Current Exercise: {exerciseType}
+          </h2>
+          <div className="border rounded-lg overflow-hidden">
+            <img
+              src={videoStreamUrl}
+              alt="Exercise Stream"
+              className="w-full h-auto"
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

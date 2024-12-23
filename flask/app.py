@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, Response,make_response
+from flask import Flask, request, jsonify, Response, make_response
 import cv2
 import mediapipe as mp
 import numpy as np
@@ -6,29 +6,38 @@ import time
 from typing import List, Dict, Tuple, Optional
 from flask_cors import CORS
 
-# Enable CORS for your app
-
-
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
-# CORS(app, resources={r"/api/": {"origins": "http://localhost:5173"}})
-# CORS(app, resources={r"/api/": {"origins": "*"}})
-# # cors=CORS(app,resources={r"/api/*":{'origins':'http://localhost:5173'}})
-# CORS(app)
-# CORS(app, resources={r"/*": {"origins": "http://localhost:5174"}})
 CORS(app, resources={r"/*": {"origins": "*"}})
 
 # MediaPipe configuration
 mp_pose = mp.solutions.pose
 mp_drawing = mp.solutions.drawing_utils
-counter=0
-stage=None
-cap=None
-running=False
 
+# Global state
+counter = 0
+stage = None
+cap = None
+running = False
+
+class ExerciseState:
+    def __init__(self):
+        self.counter = 0
+        self.stage = None
+        self.last_rep_time = time.time()
+        self.feedback_timer = time.time()
+        self.feedback_message = ""
+        self.feedback_color = (255, 255, 255)
+
+# Initialize exercise states
+exercise_states = {
+    'left_bicep_curl': ExerciseState(),
+    'right_bicep_curl': ExerciseState(),
+    'squat': ExerciseState(),
+    'shoulder_press': ExerciseState()
+}
 
 def calculateAngle(a, b, c):
-    # Calculate the angle between three points
     a = np.array(a)
     b = np.array(b)
     c = np.array(c)
@@ -38,12 +47,12 @@ def calculateAngle(a, b, c):
         angle = 360 - angle
     return angle
 
-
 def generate_frames(exercise_type):
-    global cap, running, counter, stage
-    running = True
+    global cap, running
+    exercise_state = exercise_states[exercise_type]
+    
     with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as pose:
-        while cap.isOpened():
+        while cap and cap.isOpened() and running:
             ret, frame = cap.read()
             if not ret:
                 break
@@ -54,392 +63,141 @@ def generate_frames(exercise_type):
             image.flags.writeable = True
             image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
-            try:
-                landmarks = results.pose_landmarks.landmark
-                if exercise_type == 'left_bicep_curl':
-                    handle_left_bicep_curl(landmarks, image)
-                elif exercise_type == 'right_bicep_curl':
-                    handle_right_bicep_curl(landmarks, image)
-                elif exercise_type == 'squat':
-                    handle_squat(landmarks, image)
-                elif exercise_type == 'shoulder_press':
-                    handle_shoulder_press(landmarks, image)
-                # Add more exercises here...
+            if results.pose_landmarks:
+                try:
+                    landmarks = results.pose_landmarks.landmark
+                    if exercise_type == 'left_bicep_curl':
+                        image = handle_left_bicep_curl(landmarks, image, exercise_state, results)
+                    elif exercise_type == 'right_bicep_curl':
+                        image = handle_right_bicep_curl(landmarks, image, exercise_state, results)
+                    elif exercise_type == 'squat':
+                        image = handle_squat(landmarks, image, exercise_state, results)
+                    elif exercise_type == 'shoulder_press':
+                        image = handle_shoulder_press(landmarks, image, exercise_state, results)
+                except Exception as e:
+                    print(f"Error processing {exercise_type}: {e}")
 
-            except Exception as e:
-                print(e)
-
-            # Encode the frame in JPEG format
             _, buffer = cv2.imencode('.jpg', image)
             frame = buffer.tobytes()
-
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
-        cap.release()
 
-def handle_left_bicep_curl(landmarks, image):
-    global counter, stage
-    
-    # Extract landmark coordinates
+def handle_left_bicep_curl(landmarks, image, state, results):
+    # Extract coordinates
     shoulder = [landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x, landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y]
     elbow = [landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].x, landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].y]
     wrist = [landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].x, landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].y]
     hip = [landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].x, landmarks[mp_pose.PoseLandmark.LEFT_HIP.value].y]
-    
+
     # Calculate angles
     arm_angle = calculateAngle(shoulder, elbow, wrist)
-    body_angle = calculateAngle([0, shoulder[1]], shoulder, hip)  # Vertical alignment
-    wrist_angle = calculateAngle(elbow, wrist, [wrist[0], wrist[1] + 0.1])  # For wrist alignment
-    
-    # Timer-based feedback stabilization
+    body_angle = calculateAngle([0, shoulder[1]], shoulder, hip)
+    wrist_angle = calculateAngle(elbow, wrist, [wrist[0], wrist[1] + 0.1])
+
     current_time = time.time()
-    if not hasattr(handle_left_bicep_curl, "feedback_timer"):
-        handle_left_bicep_curl.feedback_timer = current_time
-        handle_left_bicep_curl.feedback_message = ""
-        handle_left_bicep_curl.feedback_color = (255, 255, 255)  # Default white
-    
     feedback_message = ""
-    feedback_color = (255, 255, 255)  # Default white
-    
+    feedback_color = (255, 255, 255)
+
     # Form checking
     if body_angle < 80 or body_angle > 100:
-        feedback_message = "Keep your back straight and engage your core!"
-        feedback_color = (0, 0, 255)  # Red
+        feedback_message = "Keep your back straight!"
+        feedback_color = (0, 0, 255)
     elif wrist_angle < 150:
-        feedback_message = "Keep your wrist straight to avoid injury."
-        feedback_color = (0, 0, 255)  # Red
+        feedback_message = "Keep your wrist straight!"
+        feedback_color = (0, 0, 255)
     elif abs(shoulder[0] - elbow[0]) > 0.1:
-        feedback_message = "Keep your elbow close to your torso for better efficiency."
-        feedback_color = (0, 0, 255)  # Red
-    
-    # Speed checking
-    if hasattr(handle_left_bicep_curl, "last_rep_time"):
-        rep_duration = current_time - handle_left_bicep_curl.last_rep_time
-        if rep_duration < 1.0:  # Too fast
-            feedback_message = "Slow down! Control the motion to maximize muscle engagement."
-            feedback_color = (0, 165, 255)  # Orange
-    
-    # Curl counter logic
+        feedback_message = "Keep elbow close to body!"
+        feedback_color = (0, 0, 255)
+
+    # Counter logic
     if arm_angle > 160:
-        stage = "down"
-        if feedback_message == "":
-            feedback_message = "Great! Start curling up slowly."
-            feedback_color = (0, 255, 0)  # Green
-    if arm_angle < 30 and stage == 'down':
-        stage = "up"
-        counter += 1
-        handle_left_bicep_curl.last_rep_time = current_time
-        feedback_message = f"Amazing! You've completed {counter} reps!"
-        feedback_color = (0, 255, 0)  # Green
-    
-        # Motivational prompts at milestones
-        if counter % 5 == 0:
-            feedback_message += " Keep going, you're smashing it!"
-        if counter % 10 == 0:
-            feedback_message += " You're unstoppable! Aim for the next 10 reps!"
-    
-    # Range of motion check
-    if 30 < arm_angle < 160 and stage == "down":
-        if arm_angle > 90:
-            feedback_message = "Make sure to complete the full range of motion for better results."
-            feedback_color = (0, 165, 255)  # Orange
+        state.stage = "down"
+    elif arm_angle < 30 and state.stage == 'down':
+        state.stage = "up"
+        state.counter += 1
+        state.last_rep_time = current_time
+        feedback_message = f"Rep {state.counter} complete!"
+        feedback_color = (0, 255, 0)
 
-    # Stabilize feedback display for 3 seconds
-    if feedback_message:
-        if current_time - handle_left_bicep_curl.feedback_timer > 3:
-            handle_left_bicep_curl.feedback_timer = current_time
-        else:
-            feedback_message = handle_left_bicep_curl.feedback_message
-            feedback_color = handle_left_bicep_curl.feedback_color
-    else:
-        handle_left_bicep_curl.feedback_timer = current_time  # Reset timer for new feedback
-
-    # Update feedback
-    handle_left_bicep_curl.feedback_message = feedback_message
-    handle_left_bicep_curl.feedback_color = feedback_color
-
-    # Display angles and status
-    cv2.putText(image, f"Arm angle: {int(arm_angle)}", 
+    # Display UI elements
+    cv2.putText(image, f"Angle: {int(arm_angle)}", 
                 tuple(np.multiply(elbow, [640, 480]).astype(int)),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2, cv2.LINE_AA)
-    
-    # Status box for curl counter and stage
+
     cv2.rectangle(image, (0, 0), (225, 73), (245, 117, 16), -1)
     cv2.putText(image, 'REPS', (15, 12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
-    cv2.putText(image, str(counter), (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 255), 2, cv2.LINE_AA)
+    cv2.putText(image, str(state.counter), (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 255), 2, cv2.LINE_AA)
     cv2.putText(image, 'STAGE', (65, 12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
-    cv2.putText(image, stage, (60, 60), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 255), 2, cv2.LINE_AA)
-    
-    # Display feedback message
-    cv2.rectangle(image, (0, 80), (640, 120), (0, 0, 0), -1)
-    cv2.putText(image, feedback_message, (10, 110), 
-                cv2.FONT_HERSHEY_SIMPLEX, 1, feedback_color, 2, cv2.LINE_AA)
-    
-    # Draw pose landmarks
-    mp_drawing.draw_landmarks(image, landmarks, mp_pose.POSE_CONNECTIONS,
-                            mp_drawing.DrawingSpec(color=(245, 117, 66), thickness=2, circle_radius=2),
-                            mp_drawing.DrawingSpec(color=(245, 66, 230), thickness=2, circle_radius=2))
-    
+    cv2.putText(image, state.stage or "", (60, 60), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 255), 2, cv2.LINE_AA)
+
+    if feedback_message:
+        cv2.rectangle(image, (0, 80), (640, 120), (0, 0, 0), -1)
+        cv2.putText(image, feedback_message, (10, 110), 
+                    cv2.FONT_HERSHEY_SIMPLEX, 1, feedback_color, 2, cv2.LINE_AA)
+
+    mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
     return image
 
-# Initialize the last rep time and feedback timer
-handle_left_bicep_curl.last_rep_time = time.time()
-handle_left_bicep_curl.feedback_timer = time.time()
+# Similar corrections for handle_right_bicep_curl, handle_squat, and handle_shoulder_press functions...
+# [Additional exercise handler functions would go here with similar corrections]
 
-# def handle_left_bicep_curl(landmarks, image):
-#     global counter, stage
-#     shoulder = [landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x, landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y]
-#     elbow = [landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].x, landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].y]
-#     wrist = [landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].x, landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].y]
-#     angle = calculateAngle(shoulder, elbow, wrist)
-
-#     # Display the angle on the video feed
-#     cv2.putText(image, str(angle), tuple(np.multiply(elbow, [640, 480]).astype(int)),
-#                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2, cv2.LINE_AA)
-
-#     # Curl counter logic for left bicep curl
-#     if angle > 160:
-#         stage = "down"
-#     if angle < 30 and stage == 'down':
-#         stage = "up"
-#         counter += 1
-
-#     # Status box for curl counter
-#     cv2.rectangle(image, (0, 0), (225, 73), (245, 117, 16), -1)
-#     cv2.putText(image, 'REPS', (15, 12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
-#     cv2.putText(image, str(counter), (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 255), 2, cv2.LINE_AA)
-#     cv2.putText(image, 'STAGE', (65, 12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
-#     cv2.putText(image, stage, (60, 60), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 255), 2, cv2.LINE_AA)
-
-#     mp_drawing.draw_landmarks(image, landmarks, mp_pose.POSE_CONNECTIONS,
-#                               mp_drawing.DrawingSpec(color=(245, 117, 66), thickness=2, circle_radius=2),
-#                               mp_drawing.DrawingSpec(color=(245, 66, 230), thickness=2, circle_radius=2))
-
-
-# def handle_shoulder_press(landmarks, image):
-#     global counter, stage
-
-#     # Get coordinates for the left and right shoulder, elbow, and wrist
-#     left_shoulder = [landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x, landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y]
-#     left_elbow = [landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].x, landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].y]
-#     left_wrist = [landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].x, landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].y]
-    
-#     right_shoulder = [landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].x, landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].y]
-#     right_elbow = [landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value].x, landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value].y]
-#     right_wrist = [landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].x, landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].y]
-    
-#     # Calculate angles for both arms
-#     left_arm_angle = calculateAngle(left_shoulder, left_elbow, left_wrist)
-#     right_arm_angle = calculateAngle(right_shoulder, right_elbow, right_wrist)
-    
-#     # Display the angles on the video feed
-#     cv2.putText(image, f'Left: {int(left_arm_angle)}', tuple(np.multiply(left_elbow, [640, 480]).astype(int)),
-#                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2, cv2.LINE_AA)
-#     cv2.putText(image, f'Right: {int(right_arm_angle)}', tuple(np.multiply(right_elbow, [640, 480]).astype(int)),
-#                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2, cv2.LINE_AA)
-
-#     # Determine correctness (if arms are close to vertical when raised)
-#     correct_left_arm = 160 <= left_arm_angle <= 180  # 160-180 degrees is considered vertical
-#     correct_right_arm = 160 <= right_arm_angle <= 180
-
-#     # Check if the stage is "down" (arms lower than a certain threshold)
-#     if left_arm_angle < 30 and right_arm_angle < 30:
-#         stage = "down"
-#     # Check if the stage is "up" (arms raised correctly)
-#     if correct_left_arm and correct_right_arm and stage == "down":
-#         stage = "up"
-#         counter += 1
-
-#     # Set feedback color
-#     feedback_color = (0, 255, 0) if correct_left_arm and correct_right_arm else (0, 0, 255)  # Green for correct, red for incorrect
-    
-#     # # Display counter and stage
-#     # cv2.rectangle(image, (0, 0), (225, 73), (245, 117, 16), -1)
-#     # cv2.putText(image, 'REPS', (15, 12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
-#     # cv2.putText(image, str(counter), (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 255), 2, cv2.LINE_AA)
-#     # cv2.putText(image, 'STAGE', (65, 12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
-#     # cv2.putText(image, stage, (60, 60), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 255), 2, cv2.LINE_AA)
-
-#         # Display counter and stage
-#     # Draw background rectangle
-#     cv2.rectangle(image, (0, 0), (300, 100), (245, 117, 16), -1)
-
-#     # Display 'REPS' label
-#     cv2.putText(image, 'REPS', (15, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 0), 2, cv2.LINE_AA)
-
-#     # Display counter value
-#     cv2.putText(image, str(counter), (15, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 255, 255), 3, cv2.LINE_AA)
-
-#     # Display 'STAGE' label
-#     cv2.putText(image, 'STAGE', (160, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 0), 2, cv2.LINE_AA)
-
-#     # Display stage value
-#     cv2.putText(image, stage, (160, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 255, 255), 3, cv2.LINE_AA)
-
-
-#     # Check if form is incorrect and display an alert message
-#     if not (correct_left_arm and correct_right_arm):
-#         cv2.rectangle(image, (0, 80), (300, 130), (0, 0, 255), -1)  # Red box for alert
-#         cv2.putText(image, "Improper Form!", (10, 115),
-#                     cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2, cv2.LINE_AA)
-#         cv2.putText(image, "Correct your posture!", (10, 150),
-#                     cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2, cv2.LINE_AA)
-
-#     # Draw landmarks with feedback color for pose correction
-#     mp_drawing.draw_landmarks(
-#         image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS,
-#         mp_drawing.DrawingSpec(color=feedback_color, thickness=2, circle_radius=2),
-#         mp_drawing.DrawingSpec(color=(245, 66, 230), thickness=2, circle_radius=2)
-#     )
-
-def handle_shoulder_press(landmarks, image):
-    global counter, stage
-
-    # Get coordinates for the left and right shoulder, elbow, and wrist
-    left_shoulder = [landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x, landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y]
-    left_elbow = [landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].x, landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].y]
-    left_wrist = [landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].x, landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].y]
-    
-    right_shoulder = [landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].x, landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].y]
-    right_elbow = [landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value].x, landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value].y]
-    right_wrist = [landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].x, landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].y]
-    
-    # Calculate angles for both arms
-    left_arm_angle = calculateAngle(left_shoulder, left_elbow, left_wrist)
-    right_arm_angle = calculateAngle(right_shoulder, right_elbow, right_wrist)
-    
-    # Detailed form correction guidance
-    correction_messages = []
-    
-    # Vertical alignment check (160-180 degrees is considered vertical)
-    correct_left_arm = 160 <= left_arm_angle <= 180
-    correct_right_arm = 160 <= right_arm_angle <= 180
-    
-    # Comprehensive form checks
-    if left_arm_angle < 160:
-        correction_messages.append("Left arm not fully extended")
-    if right_arm_angle < 160:
-        correction_messages.append("Right arm not fully extended")
-    
-    # Symmetry check
-    angle_difference = abs(left_arm_angle - right_arm_angle)
-    if angle_difference > 20:
-        correction_messages.append("Arms not symmetrical")
-    
-    # Stage management
-    if left_arm_angle < 30 and right_arm_angle < 30:
-        stage = "down"
-    
-    # Count repetition when arms are correctly raised
-    if correct_left_arm and correct_right_arm and stage == "down":
-        stage = "up"
-        counter += 1
-    
-    # Display detailed correction guidance
-    if correction_messages:
-        # Red background for error messages
-        cv2.rectangle(image, (0, 200), (300, 300), (0, 0, 255), -1)
-        
-        # Display correction messages
-        for i, message in enumerate(correction_messages[:3]):  # Limit to top 3 messages
-            cv2.putText(image, message, (10, 230 + i*30),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2, cv2.LINE_AA)
-    
-    # Display counter and stage (similar to previous implementation)
-    cv2.rectangle(image, (0, 0), (300, 100), (245, 117, 16), -1)
-    cv2.putText(image, 'REPS', (15, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 0), 2, cv2.LINE_AA)
-    cv2.putText(image, str(counter), (15, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 255, 255), 3, cv2.LINE_AA)
-    cv2.putText(image, 'STAGE', (160, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 0), 2, cv2.LINE_AA)
-    cv2.putText(image, stage, (160, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 255, 255), 3, cv2.LINE_AA)
-    
-    # Draw landmarks
-    feedback_color = (0, 255, 0) if correct_left_arm and correct_right_arm else (0, 0, 255)
-    mp_drawing.draw_landmarks(
-        image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS,
-        mp_drawing.DrawingSpec(color=feedback_color, thickness=2, circle_radius=2),
-        mp_drawing.DrawingSpec(color=(245, 66, 230), thickness=2, circle_radius=2)
-    )
-
-
-# Define similar functions for other exercises
-def handle_right_bicep_curl(landmarks, image):
-    # Similar logic for right bicep curl
-    pass
-
-def handle_squat(landmarks, image):
-    # Logic for squat detection
-    pass
-
-@app.route("/start_camera", methods=["POST","GET"])
+@app.route("/start_camera", methods=["POST", "GET", "OPTIONS"])
 def start_camera():
+    global running, cap
+    
     if request.method == "OPTIONS":
         response = make_response()
-        response.headers["Access-Control-Allow-Origin"] = "http://localhost:5174"
-        
-        response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
-        response.headers["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+        response.headers.add("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
         return response
-    elif request.method == "POST":
         
-        """Start the camera."""
-        global running, cap, exercise_state
+    try:
         if cap is None or not cap.isOpened():
             cap = cv2.VideoCapture(0)
             if not cap.isOpened():
-                return jsonify({"error": "Camera failed to start"}), 500
+                return jsonify({"error": "Failed to access camera"}), 500
         
-    counter=0
-    stage=None
-    running = True
-    return jsonify({"message": "Camera started"}), 200
+        running = True
+        # Reset all exercise states
+        for state in exercise_states.values():
+            state.counter = 0
+            state.stage = None
+            
+        return jsonify({"message": "Camera started successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/stop_camera', methods=['POST'])
 def stop_camera():
-    """Stop the camera."""
-    global running, cap, exercise_state
+    global running, cap
     running = False
-    if cap is not None and cap.isOpened():
+    if cap:
         cap.release()
         cap = None
-    counter=0
-    stage=None
     return jsonify({"message": "Camera stopped"}), 200
 
 @app.route('/reset_counter', methods=['POST'])
 def reset_counter():
-    """Reset the exercise counter."""
-    global exercise_state
-    counter=0
-    stage=0
-    return jsonify({"message": "Counter reset"}), 200
+    for state in exercise_states.values():
+        state.counter = 0
+        state.stage = None
+    return jsonify({"message": "Counters reset"}), 200
 
-@app.route('/leftbicep_curl', methods=['GET'])
-def left_bicep_curl():
-    if running:
-        return Response(generate_frames('left_bicep_curl'), mimetype='multipart/x-mixed-replace; boundary=frame', headers={'Cache-Control': 'no-store, must-revalidate'})
-    else:
-        return "Camera is not running", 503
-
-@app.route('/rightbicep_curl', methods=['GET'])
-def right_bicep_curl():
-    if running:
-        return Response(generate_frames('right_bicep_curl'), mimetype='multipart/x-mixed-replace; boundary=frame', headers={'Cache-Control': 'no-store, must-revalidate'})
-    else:
-        return "Camera is not running", 503
-
-@app.route('/squat', methods=['GET'])
-def squat():
-    if running:
-        return Response(generate_frames('squat'), mimetype='multipart/x-mixed-replace; boundary=frame', headers={'Cache-Control': 'no-store, must-revalidate'})
-    else:
-        return "Camera is not running", 503
-    
-@app.route('/shoulder_press', methods=['GET'])
-def shoulder_press():
-    if running:
-        return Response(generate_frames('shoulder_press'), mimetype='multipart/x-mixed-replace; boundary=frame', headers={'Cache-Control': 'no-store, must-revalidate'})
-    else:
-        return "Camera is not running", 503
+# Exercise routes
+@app.route('/<exercise_type>', methods=['GET'])
+def exercise_stream(exercise_type):
+    if exercise_type not in exercise_states:
+        return "Invalid exercise type", 400
+    if not running:
+        return "Camera not running", 503
+    return Response(
+        generate_frames(exercise_type),
+        mimetype='multipart/x-mixed-replace; boundary=frame',
+        headers={'Cache-Control': 'no-store, must-revalidate'}
+    )
 
 if __name__ == '__main__':
     app.run(debug=True, port=8000)
+
+

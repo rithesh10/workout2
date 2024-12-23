@@ -59,7 +59,7 @@ export default function WorkoutPlan() {
 
   return (
     <div className="min-h-screen w-screen overflow-x-hidden bg-black flex flex-col items-center justify-center py-6 px-4 sm:px-6 lg:px-8">
-    <h1 className="text-3xl font-bold text-white mb-8 text-center">Create Your Diet Plan</h1>
+    <h1 className="text-3xl font-bold text-white mb-8 text-center">Create Your Workout Plan</h1>
   
     {/* Form Section */}
     <div className="rounded-xl shadow-lg p-6 w-full bg-gray-900  max-w-4xl">

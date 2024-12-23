@@ -1,5 +1,5 @@
 import React from 'react'
-import NavbarWorkout from './navbar'
+// import NavbarWorkout from './navbar'
 import GetWorkoutPlan from './GetWorkoutPlan'
 
 const JoinWorkout = () => {

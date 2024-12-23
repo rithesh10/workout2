@@ -11,7 +11,7 @@ import WorkoutPlan from "./Pages/Workoutplan";
 import Home from "./Pages/Home";
 import ExerciseTracker from "./Pages/ExerciseTracker";
 import UserProfile from "./Pages/UserProfile";
-import NavbarWorkout from "./workout/navbar";
+// import NavbarWorkout from "./workout/navbar";
 import JoinWorkout from "./workout/join";
 import WorkoutPage from "./workout/GetWorkoutPlan";
 import ExerciseDetail from "./workout/Exercise";
