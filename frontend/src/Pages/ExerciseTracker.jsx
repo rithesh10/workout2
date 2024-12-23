@@ -1,10 +1,24 @@
 import React, { useState } from "react";
+import Modal from "react-modal";
 
 const ExerciseTracker = () => {
   const [exerciseType, setExerciseType] = useState("");
   const [videoStreamUrl, setVideoStreamUrl] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isRunning, setIsRunning] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const routes = {
+    push_up: "Push Up",
+    left_bicep_curl: "Left Bicep Curl",
+    right_bicep_curl: "Right Bicep Curl",
+    // lunge: "Lunge",
+    plank: "Plank",
+    // deadlift: "Deadlift",
+    side_plank: "Side Plank",
+    shoulder_press: "Shoulder Press",
+    squat: "Squat",
+  };
 
   const startCamera = async () => {
     try {
@@ -62,28 +76,29 @@ const ExerciseTracker = () => {
   };
 
   const selectExercise = (type) => {
-    setExerciseType(type);
+    setExerciseType(routes[type]);
     setVideoStreamUrl(`http://localhost:8000/${type}`);
+    setIsModalOpen(false);
   };
 
   return (
-    <div className="flex flex-col min-h-screen w-screen overflow-x-hidden items-center  h-screen bg-black p-4">
+    <div className="flex flex-col min-h-screen w-screen overflow-x-hidden items-center h-screen bg-black p-4">
       <h1 className="text-4xl font-bold text-white mb-4">Exercise Tracker</h1>
       {errorMessage && (
         <p className="text-red-500 text-sm font-semibold">{errorMessage}</p>
       )}
-      <div className="flex flex-col items-center  bg-gray-700 shadow-lg rounded-lg p-6 w-full max-w-md">
+      <div className="flex flex-col items-center bg-gray-700 shadow-lg rounded-lg p-6 w-full max-w-md">
         {!isRunning ? (
           <button
             onClick={startCamera}
-            className="bg-blue-500 text-white px-4 py-2 rounded-md bg-gradient-to-r from-indigo-600 to-purple-700 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-700"
+            className="text-white px-4 py-2 rounded-md bg-gradient-to-r from-indigo-600 to-purple-700 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-700"
           >
             Start Camera
           </button>
         ) : (
           <button
             onClick={stopCamera}
-            className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition"
+            className="text-white px-4 py-2 rounded-md bg-gradient-to-r from-red-700 to-red-900 hover:opacity-90"
           >
             Stop Camera
           </button>
@@ -92,42 +107,23 @@ const ExerciseTracker = () => {
           <>
             <button
               onClick={resetCounter}
-              className="mt-4 bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600 transition"
+              className="mt-4 bg-yellow-500 text-white px-4 py-2 rounded-md bg-gradient-to-r from-amber-500 to-orange-700 hover:opacity-90"
             >
               Reset Counters
             </button>
-            <div className="flex flex-wrap justify-center mt-4 gap-2">
-              <button
-                onClick={() => selectExercise("left_bicep_curl")}
-                className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition"
-              >
-                Left Bicep Curl
-              </button>
-              <button
-                onClick={() => selectExercise("right_bicep_curl")}
-                className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition"
-              >
-                Right Bicep Curl
-              </button>
-              <button
-                onClick={() => selectExercise("squat")}
-                className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition"
-              >
-                Squat
-              </button>
-              <button
-                onClick={() => selectExercise("shoulder_press")}
-                className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition"
-              >
-                Shoulder Press
-              </button>
-            </div>
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-md bg-gradient-to-r from-blue-600 to-blue-800 hover:opacity-90"
+            >
+              Select Exercise
+            </button>
           </>
         )}
       </div>
+
       {isRunning && exerciseType && (
         <div className="mt-6 bg-gray-700 shadow-lg rounded-lg p-4 w-full max-w-lg">
-          <h2 className="text-lg font-semibold text-gray-800 mb-2">
+          <h2 className="text-lg font-semibold text-white mb-2">
             Current Exercise: {exerciseType}
           </h2>
           <div className="border rounded-lg overflow-hidden">
@@ -139,6 +135,33 @@ const ExerciseTracker = () => {
           </div>
         </div>
       )}
+
+      {/* Modal for selecting exercise */}
+      <Modal
+        isOpen={isModalOpen}
+        onRequestClose={() => setIsModalOpen(false)}
+        className="bg-gray-800 rounded-lg p-4 max-w-md mx-auto mt-20"
+        overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
+      >
+        <h2 className="text-xl font-bold text-white mb-4">Select Exercise</h2>
+        <div className="grid grid-cols-1 gap-2">
+          {Object.entries(routes).map(([key, value]) => (
+            <button
+              key={key}
+              onClick={() => selectExercise(key)}
+              className="text-white px-4 py-2 rounded-md bg-gradient-to-r from-green-600 to-green-800 hover:opacity-90"
+            >
+              {value}
+            </button>
+          ))}
+        </div>
+        <button
+          onClick={() => setIsModalOpen(false)}
+          className="mt-4 text-white px-4 py-2 rounded-md bg-gradient-to-r from-red-600 to-red-800 hover:opacity-90"
+        >
+          Close
+        </button>
+      </Modal>
     </div>
   );
 };
