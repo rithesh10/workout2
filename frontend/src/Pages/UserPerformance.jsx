@@ -27,10 +27,10 @@ const UserPerformance = () => {
   const fetchPerformance = async (userId) => {
     try {
       console.log("Fetching performance data for userId:", userId); // Log the userId being used
-      const response = await axios.get(`http://localhost:4000/perform/${userId}`);
+      const response = await axios.get(`http://localhost:4000/api/v1/user/workoutPerformance/${userId}`);
       console.log("Performance API Response:", response); // Log the API response
-
-      if (response && response.data && response.data.users) {
+      console.log(response.data.user)
+      if (response && response.data) {
         setPerform(response.data.users[0].workouts); // Update performance state
       } else {
         console.error("No performance data found in the API response.");

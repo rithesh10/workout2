@@ -1,9 +1,9 @@
-import mongoose, { Schema } from "mongoose";
-import jwt from "jsonwebtoken";
+import mongoose ,{Schema}from 'mongoose'
+import jwt from  "jsonwebtoken";
 import bcrypt from "bcrypt";
 import PhoneNumber from "awesome-phonenumber";
 
-const userSchema = new Schema(
+const userSchema = new mongoose.Schema(
     {
         fullName: {
             type: String,
