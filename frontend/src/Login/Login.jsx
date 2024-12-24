@@ -50,13 +50,13 @@ const LoginModal = ({ closeModal }) => {
   <div className="bg-gray-800 p-8 rounded-lg w-full max-w-md mx-4 shadow-xl">
     {/* Modal Header */}
     <div className="flex justify-between items-center mb-6">
-      <h2 className="text-2xl font-bold text-white">Login</h2>
       <button 
         onClick={closeModal} 
-        className="text-gray-300 hover:text-gray-100 focus:outline-none"
+        className="text-gray-300 bg-gray-800  hover:text-gray-100 focus:outline-none"
       >
         <X className="h-6 w-6" />
       </button>
+      <h2 className="text-2xl font-bold text-white">Login</h2>
     </div>
     
     {/* Form */}
@@ -101,7 +101,7 @@ const LoginModal = ({ closeModal }) => {
       >
         Log In
       </button>
-      <Link to='/forget-password' > <span>Forgot password?</span>?</Link>
+      <Link to='/forget-password' className='block w-full text-center mt-4'> <span>Forgot password?</span>?</Link>
     </form>
   </div>
 </div>

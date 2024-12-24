@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import config from '../config/config';
-import { Lock, Mail, KeyRound, CheckCircle2 } from 'lucide-react';
+import { Lock, Mail, KeyRound, CheckCircle2, X, ArrowLeft, Link } from 'lucide-react';
 
 const ForgotPassword = () => {
     const [step, setStep] = useState('forgotPassword');
@@ -25,7 +25,8 @@ const ForgotPassword = () => {
     };
 
     return (
-        <div className="min-h-screen bg-black flex items-center justify-center px-4 py-8">
+        <div className="min-h-screen w-screen overflow-hidden  bg-black flex items-center justify-center px-4 py-8">
+            
             <div className="w-full max-w-md bg-gray-800 shadow-md rounded-lg p-8">
                 {step === 'forgotPassword' && (
                     <ForgotPasswordForm
@@ -49,11 +50,27 @@ const ForgotPassword = () => {
 };
 
 // Forgot Password Form
-const ForgotPasswordForm = ({ email, setEmail, error, onSubmit }) => (
+const ForgotPasswordForm = ({ email, setEmail, error, onSubmit }) => {
+    const navigate=useNavigate();
+    const handleBack=(e)=>{
+        e.preventDefault();
+        navigate('/')
+    
+    }
+    return (
     <div>
-        <div className="flex items-center justify-center mb-6">
+        <div className="flex items-center justify-between mb-6 relative">
+        {/* Left Arrow */}
+        <button onClick={handleBack} className="absolute left-0 bg-gray-800 h-4 w-4 text-white p-2 rounded-md">
+            <ArrowLeft className="w-6 h-6" />
+        </button>
+
+        {/* Center Lock */}
+        <div className="flex justify-center w-full">
             <Lock className="w-12 h-12 text-purple-600" />
         </div>
+        </div>
+
         <h2 className="text-2xl font-bold text-center text-white mb-4">Forgot Password</h2>
         <p className="text-white text-center mb-6">Enter your email to reset your password</p>
         <form onSubmit={onSubmit}>
@@ -81,7 +98,8 @@ const ForgotPasswordForm = ({ email, setEmail, error, onSubmit }) => (
             </button>
         </form>
     </div>
-);
+    )
+};
 
 // OTP Verification Form
 const VerifyOtpForm = ({ email, onSuccess, onError }) => {
