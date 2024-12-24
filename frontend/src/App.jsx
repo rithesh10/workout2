@@ -19,6 +19,7 @@ import GetDietPlan from "./Diet/GetDietPlan";
 import PerformanceModal from "./workout/Performance";
 import Footer from "./components/Footer";
 import ForgotPassword from "./Login/ForgotPassword";
+import UserPerformance from "./Pages/UserPerformance";
 
 const App = () => {
 
@@ -48,6 +49,7 @@ const App = () => {
           <Route path="/getDiet" element={<GetDietPlan/>}/>
           <Route path="/performance" element={<PerformanceModal/>}/>
           <Route path="/forget-password" element={<ForgotPassword/>}/>
+          <Route path="/user-performance" element={<UserPerformance/>}/>
         </Routes>
               </div>
 

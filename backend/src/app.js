@@ -9,6 +9,8 @@ import ExerciseRouter from "./routes/exercise.routes.js";
 import FoodRouter from "./routes/FoodData.routes.js";
 import weightLogRouter from "./routes/weightLog.route.js";
 import performanceRouter from "./routes/performance.routes.js";
+import PerformanceModel from "./models/Performance.model.js";
+// import AdminLogin from "../../admin/src/components/AdminLogin.jsx";
 import AdminRouter from "./routes/Admin.routes.js";
 app.use(
   cors({
@@ -32,5 +34,36 @@ app.use("/api/v1/user", FoodRouter);
 app.use("/api/v1/user", weightLogRouter);
 app.use("/api/v1/user", performanceRouter);
 app.use("/api/v1/admin", AdminRouter);
-export { app };
 
+
+
+// app.get('/perform/:id',async(req,res)=>{
+//   const id=req.params.id;
+//   try {
+//     const users=await PerformanceModel.find({user:id});
+//     if(!users){
+//       return res.status(404).json({"message":"users not found"});
+//     }
+//     return res.status(200).json({"message":"users",users});
+    
+//   } catch (error) {
+//     console.log(error)
+//     return res.status(500).json({"message":error});
+//   }
+// });
+
+// app.get('/perform',async(req,res)=>{
+//   // const id=req.params.id;
+//   try {
+//     const users=await PerformanceModel.find();
+//     if(!users){
+//       return res.status(404).json({"message":"users not found"});
+//     }
+//     return res.status(200).json({"message":users});
+    
+//   } catch (error) {
+//     console.log(error)
+//     return res.status(500).json({"message":error});
+//   }
+// });
+export { app };

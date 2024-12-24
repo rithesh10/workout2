@@ -113,4 +113,18 @@ const getUserPerformance=asyncHandler(async(req,res)=>{
     
   }
 })
-export {AddPerformance,getPerformance,getUserPerformance};
+const workoutPerformace=async(req,res)=>{
+    const id=req.params.id;
+  try {
+    const users=await PerformanceModel.find({user:id});
+    if(!users){
+      return res.status(404).json({"message":"users not found"});
+    }
+    return res.status(200).json({"message":"users",users});
+    
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json({"message":error});
+  }
+}
+export {AddPerformance,getPerformance,getUserPerformance,workoutPerformace};
