@@ -34,7 +34,13 @@ exercise_states = {
     'left_bicep_curl': ExerciseState(),
     'right_bicep_curl': ExerciseState(),
     'squat': ExerciseState(),
-    'shoulder_press': ExerciseState()
+    'shoulder_press': ExerciseState(),
+    'push_up':ExerciseState(),
+    'side_plank':ExerciseState(),
+    'deadlift':ExerciseState(),
+    'plank':ExerciseState(),
+    'lunge':ExerciseState()
+
 }
 
 def calculateAngle(a, b, c):
