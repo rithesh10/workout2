@@ -9,8 +9,6 @@ const AddPerformance = asyncHandler(async (req, res) => {
         const { workoutName, sets } = req.body;
         const userID = req.user?._id;
 
-        // console.log(workoutName, sets);
-
         // Validate inputs
         if (!workoutName) {
             throw new ApiError(404, "Workout name is required");
@@ -30,22 +28,34 @@ const AddPerformance = asyncHandler(async (req, res) => {
             performance = new PerformanceModel({ user: userID, workouts: [] });
         }
 
-        // Check if the workout already exists
-        const existingWorkout = performance.workouts.find(workout => 
-            workout.todayExercises.some(exercise => exercise.workoutName === workoutName)
+        // Get today's date in ISO format (without time part)
+        const today = new Date().toISOString().split("T")[0];
+
+        // Check if a workout entry for today already exists
+        let existingWorkout = performance.workouts.find(workout =>
+            new Date(workout.date).toISOString().split("T")[0] === today
         );
 
         if (existingWorkout) {
-            // Update the existing workout's sets
-            for (const exercise of existingWorkout.todayExercises) {
-                if (exercise.workoutName === workoutName) {
-                    exercise.sets = sets; // Update the sets
-                    break;
-                }
+            // Check if the workout name already exists in today's exercises
+            const existingExercise = existingWorkout.todayExercises.find(
+                exercise => exercise.workoutName === workoutName
+            );
+
+            if (existingExercise) {
+                // Update the existing exercise's sets
+                existingExercise.sets = sets;
+            } else {
+                // Add the new exercise to today's exercises
+                existingWorkout.todayExercises.push({
+                    workoutName,
+                    sets,
+                });
             }
         } else {
-            // Add a new workout entry
+            // Create a new workout entry for today
             const workoutEntry = {
+                date: new Date(), // Set the current date
                 todayExercises: [
                     {
                         workoutName,
@@ -66,6 +76,7 @@ const AddPerformance = asyncHandler(async (req, res) => {
         throw new ApiError(400, error, "Error pushing the data into the database");
     }
 });
+
 
 const getPerformance=asyncHandler(async(req,res)=>{
     try {

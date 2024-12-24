@@ -1,22 +1,18 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import "./UserPerformance.css"; // Import the CSS file
 
 const UserPerformance = () => {
   const [user, setUser] = useState({});
-  const [perform, setPerform] = useState(null); // Initialize as null to clearly differentiate loading state
+  const [perform, setPerform] = useState(null);
 
   // Fetch user data from localStorage
   const fetchUserData = async () => {
     try {
       const storedData = localStorage.getItem("userData");
-      console.log("Retrieved stored user data:", storedData); // Log the stored data
-
       if (storedData) {
-        const parsedUser = JSON.parse(storedData); // Converts back to object
-        console.log("Parsed user data:", parsedUser); // Log parsed user data
-        setUser(parsedUser); // Update user state
-        return parsedUser; // Return parsedUser for further use
+        const parsedUser = JSON.parse(storedData);
+        setUser(parsedUser);
+        return parsedUser;
       }
     } catch (error) {
       console.error("Error fetching user data:", error);
@@ -26,14 +22,11 @@ const UserPerformance = () => {
   // Fetch performance data from API based on user ID
   const fetchPerformance = async (userId) => {
     try {
-      console.log("Fetching performance data for userId:", userId); // Log the userId being used
-      const response = await axios.get(`http://localhost:4000/api/v1/user/workoutPerformance/${userId}`);
-      console.log("Performance API Response:", response); // Log the API response
-      console.log(response.data.user)
+      const response = await axios.get(
+        `http://localhost:4000/api/v1/user/workoutPerformance/${userId}`
+      );
       if (response && response.data) {
-        setPerform(response.data.users[0].workouts); // Update performance state
-      } else {
-        console.error("No performance data found in the API response.");
+        setPerform(response.data.users[0].workouts);
       }
     } catch (error) {
       console.error("Error fetching performance data:", error);
@@ -42,59 +35,99 @@ const UserPerformance = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const userData = await fetchUserData(); // Fetch user data first
-      console.log("Fetched userData:", userData); // Log user data after fetching
+      const userData = await fetchUserData();
       if (userData?._id) {
-        fetchPerformance(userData._id); // Fetch performance data if userId is available
-      } else {
-        console.error("User data is missing the _id field.");
+        fetchPerformance(userData._id);
       }
     };
     fetchData();
   }, []);
 
-  // Log perform state after it's set
-  useEffect(() => {
-    console.log("Current performance data:", perform);
-  }, [perform]);
-
-  // Helper function to format the date
+  // Helper function to format the date in a professional way
   const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString();
+    const options = { year: "numeric", month: "long", day: "numeric" };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
+  // Group workouts by date and consolidate exercises for each date
+  const groupWorkoutsByDate = (workouts) => {
+    return workouts.reduce((grouped, workout) => {
+      const date = workout.date;
+      if (!grouped[date]) {
+        grouped[date] = [];
+      }
+      grouped[date].push(...workout.todayExercises);
+      return grouped;
+    }, {});
   };
 
   return (
-    <div className="user-performance-container">
-      <h1>User Performance</h1>
-      {perform === null ? (
-        <p className="loading-message">Loading...</p> // Fallback message while data is being fetched
-      ) : perform.length > 0 ? (
-        <div className="performance-data">
-          {perform.map((workout, index) => (
-            <div key={index} className="workout-item">
-              <h3>{formatDate(workout.date)}</h3> {/* Format and display the date */}
-              {workout.todayExercises.map((exercise, exIndex) => (
-                <div key={exIndex} className="exercise-item">
-                  <h4>{exercise.workoutName}</h4> {/* Workout name */}
-                  <div className="sets-list">
-                    {exercise.sets.map((set, setIndex) => (
-                      <div key={setIndex} className="set-details">
-                        <p><strong>Set:</strong> {set.set}</p> {/* Set number */}
-                        <p><strong>Reps:</strong> {set.rep}</p> {/* Repetitions */}
-                        <p><strong>Weight:</strong> {set.weight} kg</p> {/* Weight */}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
+    // <div className=" min-h-screen w-screen overflow-x-hidden bg-black flex items-center justify-center p-6">
+      <div className="min-h-screen w-screen overflow-x-hidden  bg-white shadow-lg rounded-lg overflow-hidden">
+        <header className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white py-6 px-8 text-center">
+          <h1 className="text-3xl font-bold">User Performance</h1>
+          <p className="mt-2 text-lg">Track and review your workout progress</p>
+        </header>
+
+        <main className="p-8 bg-gray-8  00">
+          {perform === null ? (
+            <div className="text-center py-12">
+              <p className="text-gray-900 text-xl animate-pulse">
+                Loading performance data...
+              </p>
             </div>
-          ))}
-        </div>
-      ) : (
-        <p className="loading-message">No performance data available.</p> // Message when no data is found
-      )}
-    </div>
+          ) : Object.keys(groupWorkoutsByDate(perform)).length > 0 ? (
+            <div className="space-y-8">
+              {Object.entries(groupWorkoutsByDate(perform)).map(
+                ([date, exercises], index) => (
+                  <div key={index} className="bg-gray-900  rounded-lg p-6 shadow">
+                    <h3 className="text-2xl text-white font-semibold  mb-4">
+                      {formatDate(date)}
+                    </h3>
+                    <div className="space-y-6 border-white bg-black">
+                      {exercises.map((exercise, exIndex) => (
+                        <div
+                          key={exIndex}
+                          className="bg-white  p-4 rounded-lg shadow-md"
+                        >
+                          <h4 className="text-xl font-medium text-gray-800">
+                            {exercise.workoutName}
+                          </h4>
+                          <div className="mt-4 grid gap-6 sm:grid-cols-2 md:grid-cols-3">
+                            {exercise.sets.map((set, setIndex) => (
+                              <div
+                                key={setIndex}
+                                className="border border-gray-200 p-4 rounded-lg shadow-sm bg-gray-50"
+                              >
+                                <p className="text-sm text-gray-600">
+                                  <strong>Set:</strong> {set.set}
+                                </p>
+                                <p className="text-sm text-gray-600">
+                                  <strong>Reps:</strong> {set.rep}
+                                </p>
+                                <p className="text-sm text-gray-600">
+                                  <strong>Weight:</strong> {set.weight} kg
+                                </p>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )
+              )}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-gray-600 text-lg">
+                No performance data available.
+              </p>
+            </div>
+          )}
+        </main>
+      </div>
+    // </div>
   );
 };
 

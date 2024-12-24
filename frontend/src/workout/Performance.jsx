@@ -1,72 +1,68 @@
-import axios from 'axios';
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import config from '../config/config';
-const url=import.meta.env.VITE_BACKEND_URL
+import axios from "axios";
+import React, { useState } from "react";
+import config from "../config/config";
+
 const PerformanceModal = ({ exerciseName, isOpen, onClose }) => {
   const [sets, setSets] = useState([]);
-  const [set, setSet] = useState('');
-  const [rep, setRep] = useState('');
-  const [weight, setWeight] = useState('');
+  const [set, setSet] = useState("");
+  const [rep, setRep] = useState("");
+  const [weight, setWeight] = useState("");
   const [count, setCount] = useState(1);
 
   const onAdd = () => {
     if (!set || !rep || !weight) {
-      alert('Please fill all fields before adding the set.');
+      alert("Please fill all fields before adding the set.");
       return;
     }
     const temp = { set: Number(set), rep: Number(rep), weight: Number(weight) };
     setSets((prevSets) => [...prevSets, temp]);
     setCount((prevCount) => prevCount + 1);
-    setSet('');
-    setRep('');
-    setWeight('');
+    setSet("");
+    setRep("");
+    setWeight("");
   };
 
-  const onSubmit = async(e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
 
     if (sets.length === 0) {
-      alert('Please add at least one set before submitting.');
+      alert("Please add at least one set before submitting.");
       return;
     }
-    const data={
-        workoutName:exerciseName,
-        sets:sets,
-    }
-    
-    console.log("data:",data);
+
+    const data = {
+      workoutName: exerciseName,
+      sets: sets,
+    };
+
     try {
-        const response = await axios.post(`${config.backendUrl}/add-performance`,{
-            workoutName:exerciseName,
-            sets
-        },{
-            withCredentials:true,
-            headers: {
-              "ngrok-skip-browser-warning": "true" // Add the ngrok-specific header
-            }
-        })
-        if(response.status==200)
+      const response = await axios.post(
+        `${config.backendUrl}/add-performance`,
+        data,
         {
-            alert("Successfull saved the data");
-
+          withCredentials: true,
+          headers: {
+            "ngrok-skip-browser-warning": "true", // Add the ngrok-specific header
+          },
         }
-    } catch (error) {
-        
-    }
+      );
 
-    // Log the data for testing purposes
-    console.log('Performance Data Submitted:', { sets });
-    alert('Submission successful!');
-    onClose();  // Close the modal after submission
+      if (response.status === 200) {
+        alert("Successfully saved the data");
+        onClose(); // Close the modal after submission
+      }
+    } catch (error) {
+      console.error("Error submitting performance data:", error);
+      alert("Failed to submit performance data. Please try again.");
+    }
   };
 
-  if (!isOpen) return null;  // Render nothing if modal is not open
+  if (!isOpen) return null; // Render nothing if modal is not open
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-lg">
-        <h2 className="text-xl text-center font-bold mb-4">
+      <div className="bg-white text-black rounded-lg p-6 w-full max-w-lg">
+        <h2 className="text-xl text-black text-center font-bold mb-4">
           Performance for {exerciseName}
         </h2>
 
@@ -78,7 +74,9 @@ const PerformanceModal = ({ exerciseName, isOpen, onClose }) => {
               <input
                 type="number"
                 value={set}
-                onChange={(e) => setSet(e.target.value === '' ? '' : Number(e.target.value))}
+                onChange={(e) =>
+                  setSet(e.target.value === "" ? "" : Number(e.target.value))
+                }
                 className="border bg-white rounded px-2 py-1 w-full"
               />
             </label>
@@ -87,7 +85,9 @@ const PerformanceModal = ({ exerciseName, isOpen, onClose }) => {
               <input
                 type="number"
                 value={rep}
-                onChange={(e) => setRep(e.target.value === '' ? '' : Number(e.target.value))}
+                onChange={(e) =>
+                  setRep(e.target.value === "" ? "" : Number(e.target.value))
+                }
                 className="border bg-white rounded px-2 py-1 w-full"
               />
             </label>
@@ -96,7 +96,9 @@ const PerformanceModal = ({ exerciseName, isOpen, onClose }) => {
               <input
                 type="number"
                 value={weight}
-                onChange={(e) => setWeight(e.target.value === '' ? '' : Number(e.target.value))}
+                onChange={(e) =>
+                  setWeight(e.target.value === "" ? "" : Number(e.target.value))
+                }
                 className="border bg-white rounded px-2 py-1 w-full"
               />
             </label>
