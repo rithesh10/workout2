@@ -35,7 +35,7 @@ const LandingPage = () => {
                 Features
               </a>
               <a href="#pricing" className="text-white hover:text-blue-600">
-                Pricing
+                {/* Pricing */}
               </a>
               <button
                 onClick={toggleLogin}
@@ -66,7 +66,7 @@ const LandingPage = () => {
                 Features
               </a>
               <a href="#pricing" className="block px-3 py-2 text-gray-600 hover:text-black">
-                Pricing
+                {/* Pricing */}
               </a>
               <button
                 onClick={toggleLogin}
@@ -101,7 +101,7 @@ const LandingPage = () => {
   <div
     className="block md:hidden absolute inset-0"
     style={{
-      backgroundImage: "url('/MobileGym.jpg')",
+      backgroundImage: "url('/MobileGym.jpeg')",
       backgroundSize: 'cover',
       backgroundPosition: 'center',
     }}

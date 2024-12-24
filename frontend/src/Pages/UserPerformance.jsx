@@ -64,15 +64,15 @@ const UserPerformance = () => {
   return (
     // <div className=" min-h-screen w-screen overflow-x-hidden bg-black flex items-center justify-center p-6">
       <div className="min-h-screen w-screen overflow-x-hidden  bg-white shadow-lg rounded-lg overflow-hidden">
-        <header className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white py-6 px-8 text-center">
+        <header className=" bg-black text-white py-6 px-8 text-center">
           <h1 className="text-3xl font-bold">User Performance</h1>
           <p className="mt-2 text-lg">Track and review your workout progress</p>
         </header>
 
-        <main className="p-8 bg-gray-8  00">
+        <main className="p-8 bg-black  00">
           {perform === null ? (
             <div className="text-center py-12">
-              <p className="text-gray-900 text-xl animate-pulse">
+              <p className="text-gray-900 bg-black text-xl animate-pulse">
                 Loading performance data...
               </p>
             </div>
@@ -80,32 +80,32 @@ const UserPerformance = () => {
             <div className="space-y-8">
               {Object.entries(groupWorkoutsByDate(perform)).map(
                 ([date, exercises], index) => (
-                  <div key={index} className="bg-gray-900  rounded-lg p-6 shadow">
+                  <div key={index} className="bg-gray-800   rounded-lg p-6 shadow">
                     <h3 className="text-2xl text-white font-semibold  mb-4">
                       {formatDate(date)}
                     </h3>
-                    <div className="space-y-6 border-white bg-black">
+                    <div className="space-y-6  bg-black">
                       {exercises.map((exercise, exIndex) => (
                         <div
                           key={exIndex}
-                          className="bg-white  p-4 rounded-lg shadow-md"
+                          className="bg-gray-700 border-1 border-white   p-4 rounded-lg shadow-md"
                         >
-                          <h4 className="text-xl font-medium text-gray-800">
+                          <h4 className="text-xl font-medium  text-white">
                             {exercise.workoutName}
                           </h4>
                           <div className="mt-4 grid gap-6 sm:grid-cols-2 md:grid-cols-3">
                             {exercise.sets.map((set, setIndex) => (
                               <div
                                 key={setIndex}
-                                className="border border-gray-200 p-4 rounded-lg shadow-sm bg-gray-50"
+                                className=" bg-gray-600 text-black p-4 rounded-lg shadow-sm "
                               >
-                                <p className="text-sm text-gray-600">
+                                <p className="text-sm text-white">
                                   <strong>Set:</strong> {set.set}
                                 </p>
-                                <p className="text-sm text-gray-600">
+                                <p className="text-sm text-white">
                                   <strong>Reps:</strong> {set.rep}
                                 </p>
-                                <p className="text-sm text-gray-600">
+                                <p className="text-sm text-white">
                                   <strong>Weight:</strong> {set.weight} kg
                                 </p>
                               </div>

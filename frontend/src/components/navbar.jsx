@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Home, Dumbbell, Apple, User, LogOut, Menu, X } from "lucide-react"; // Import Menu and X icons for hamburger
+import { Home, Dumbbell, Apple, User, LogOut, Menu, X, Activity } from "lucide-react"; // Import Menu and X icons for hamburger
 import { useState } from "react";
 import axios from "axios";
 import config from "../config/config";
@@ -7,9 +7,9 @@ import config from "../config/config";
 export default function Navbar() {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false); // State for managing the mobile menu visibility
-  const handleNavigate=async()=>{
-    navigate("/user-performance");
-  }
+  // const handleNavigate=async()=>{
+  //   navigate("/user-performance");
+  // }
 
   const handleLogout = async () => {
     try {
@@ -57,7 +57,7 @@ export default function Navbar() {
           </button>
           {/* Navigation Links - For Large Screens */}
           <div className="hidden lg:flex no-underline items-center space-x-6">
-            <button
+            {/* <button
               style={{
                 color: "white",
                 // width: "150px",
@@ -67,7 +67,8 @@ export default function Navbar() {
               onClick={handleNavigate}
             >
               Performance
-            </button>
+            </button> */}
+            <NavLink to="/user-performance" icon={<Activity/>} text="Performace"/>
             <NavLink to="/getWorkoutPlan" icon={<Dumbbell />} text="Workout" />
             <NavLink to="/getDiet" icon={<Apple />} text="Diet" />
             <NavLink to="/profile" icon={<User />} text="Profile" />
