@@ -6,20 +6,20 @@ import LoginModal from "./Login/Login";
 import RegisterModal from "./Login/RegisterModal";
 // import { Route} from 'lucide-react'
 import Join from "./Pages/join";
-import DietPlan from "./Pages/Dietplan";
-import WorkoutPlan from "./Pages/Workoutplan";
+import DietPlan from "./features/Diet/Dietplan"
+import WorkoutPlan from "./features/workout/Workoutplan";
 import Home from "./Pages/Home";
 import ExerciseTracker from "./Pages/ExerciseTracker";
 import UserProfile from "./Pages/UserProfile";
 // import NavbarWorkout from "./workout/navbar";
-import JoinWorkout from "./workout/join";
-import WorkoutPage from "./workout/GetWorkoutPlan";
-import ExerciseDetail from "./workout/Exercise";
-import GetDietPlan from "./Diet/GetDietPlan";
-import PerformanceModal from "./workout/Performance";
+import JoinWorkout from "./features/workout/join";
+import WorkoutPage from "./features/workout/GetWorkoutPlan";
+import ExerciseDetail from "./features/workout/Exercise";
+import GetDietPlan from "./features/Diet/GetDietPlan";
+import PerformanceModal from "./features/workout/Performance";
 import Footer from "./components/Footer";
 import ForgotPassword from "./Login/ForgotPassword";
-import UserPerformance from "./Pages/UserPerformance";
+import UserPerformance from "./features/workout/UserPerformance";
 
 const App = () => {
 

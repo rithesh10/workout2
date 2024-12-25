@@ -3,9 +3,9 @@ import { Link, resolvePath } from 'react-router-dom';
 import { Dumbbell, Menu, Search, User, Utensils, X } from 'lucide-react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import Spinner from '../components/Spinner';
+import Spinner from '../../components/Spinner';
 import PerformanceModal from './Performance';
-import config from '../config/config';
+import config from '../../config/config';
 
 
 // Context for search functionality

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
-import config from '../config/config';
+import config from '../../config/config';
 
 export default function DietPlan() {
   const [formData, setFormData] = useState({

@@ -2,7 +2,7 @@ const url=import.meta.env.VITE_BACKEND_URL
 import { useState,useEffect } from "react";
 import axios from 'axios';
 import React from "react";
-import Spinner from "../components/Spinner";
+import Spinner from "../../components/Spinner";
  const GetDietPlan = () => {
     const [dietPlan,setDietPlan] = useState(null);
     const [loading, setLoading] = useState(true);

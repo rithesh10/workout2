@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
-import config from "../config/config";
+import config from "../../config/config";
 
 const PerformanceModal = ({ exerciseName, isOpen, onClose }) => {
   const [sets, setSets] = useState([]);

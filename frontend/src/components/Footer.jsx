@@ -58,7 +58,7 @@ const Footer = () => {
             </div>
             <div className="flex items-center">
               <Phone size={20} className="mr-2" />
-              <span className="text-gray-300">+91 798 199 1406</span>
+              <span className="text-gray-300"> 199 1406</span>
             </div>
           </div>
         </div>
@@ -69,7 +69,8 @@ const Footer = () => {
       {/* Bottom Copyright */}
       <div className="border-t border-gray-700 mt-8 pt-4 text-center">
         <p className="text-sm text-gray-400">
-          © 2024 FitTrack. All Rights Reserved.
+        © {new Date().getFullYear()} FitTrack. All Rights Reserved.
+
         </p>
       </div>
     </footer>
