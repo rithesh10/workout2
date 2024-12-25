@@ -1,11 +1,12 @@
 import { Router } from "express";
 const UserRouter=Router();
 import { upload } from "../middleware/multer.middleware.js";
-import { changePassword, getAllUsers, getCurrentUser, loginUser, logout, refreshAccessToken, registerUser, updateUserDetails,forgotPassword,verifyOtp,resetPassword, updateUserByAdmin, deleteUserByAdmin } from "../controllers/user.controller.js";
+import { changePassword, getAllUsers, getCurrentUser, loginUser, logout, refreshAccessToken, registerUser, updateUserDetails,forgotPassword,verifyOtp,resetPassword, updateUserByAdmin, deleteUserByAdmin,loginOtp } from "../controllers/user.controller.js";
 import { verifyJWT } from "../middleware/auth.middleware.js";
 // import { useSearch } from "../../../frontend/src/workout/navbar.jsx";
 UserRouter.route("/register").post(registerUser )
 UserRouter.route("/login").post(loginUser)
+UserRouter.route("/verify-login-otp").post(loginOtp)
 UserRouter.route("/change-password").post(verifyJWT,changePassword)
 UserRouter.route("/get-user").post(verifyJWT,getCurrentUser)
 UserRouter.route("/logout").post(verifyJWT,logout);
