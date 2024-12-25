@@ -58,8 +58,19 @@ const LoginModal = ({ closeModal }) => {
       );
 
       if (response.status === 200) {
-        localStorage.setItem('userData', JSON.stringify(response.data.data.user));
-        navigate("/dash");
+        if(response.data.data.user.role=="user")
+        {
+          
+          navigate("/dash");
+          localStorage.setItem('userData', JSON.stringify(response.data.data.user));
+        }
+        else if (response.data.data.user.role=="admin")
+        {
+          localStorage.setItem('adminData', JSON.stringify(response.data.data.user));
+      
+          navigate('/admin/dashboard');
+      
+        }
         closeModal();
       }
     } catch (error) {

@@ -42,7 +42,7 @@ const generateAccessAndRefreshToken = async (userID) => {
   }
 };
 const registerUser = asyncHandler(async (req, res) => {
-  const { email, fullName, password, phone, gender } = req.body;
+  const { email, role,fullName, password, phone, gender } = req.body;
   // console.log(email,fullName,password,phone,gender);
   if (
     [fullName, email, password, phone, gender].some(
@@ -82,6 +82,7 @@ const registerUser = asyncHandler(async (req, res) => {
     email,
     password,
     phone,
+    role,
     // profilePicture: profilePicture.url,
     gender,
   });

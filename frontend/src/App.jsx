@@ -1,25 +1,26 @@
 import React from "react";
 import LandingPage from "./Login/LandingPage";
 import { Routes, Route, BrowserRouter } from "react-router-dom";
-import Dashboard from "./Pages/Dashboard";
+import Dashboard from "./Client/Pages/Dashboard";
 import LoginModal from "./Login/Login";
 import RegisterModal from "./Login/RegisterModal";
 // import { Route} from 'lucide-react'
-import Join from "./Pages/join";
-import DietPlan from "./features/Diet/Dietplan"
-import WorkoutPlan from "./features/workout/Workoutplan";
-import Home from "./Pages/Home";
-import ExerciseTracker from "./Pages/ExerciseTracker";
-import UserProfile from "./Pages/UserProfile";
+import Join from "./Client/Pages/join";
+import DietPlan from "./Client/features/Diet/Dietplan"
+import WorkoutPlan from "./Client/features/workout/Workoutplan";
+import Home from "./Client/Pages/Home";
+import ExerciseTracker from "./Client/Pages/ExerciseTracker";
+import UserProfile from "./Client/Pages/UserProfile";
 // import NavbarWorkout from "./workout/navbar";
-import JoinWorkout from "./features/workout/join";
-import WorkoutPage from "./features/workout/GetWorkoutPlan";
-import ExerciseDetail from "./features/workout/Exercise";
-import GetDietPlan from "./features/Diet/GetDietPlan";
-import PerformanceModal from "./features/workout/Performance";
-import Footer from "./components/Footer";
+import JoinWorkout from "./Client/features/workout/join";
+import WorkoutPage from "./Client/features/workout/GetWorkoutPlan";
+import ExerciseDetail from "./Client/features/workout/Exercise";
+import GetDietPlan from "./Client/features/Diet/GetDietPlan";
+import PerformanceModal from "./Client/features/workout/Performance";
+import Footer from "./Client/components/Footer";
 import ForgotPassword from "./Login/ForgotPassword";
-import UserPerformance from "./features/workout/UserPerformance";
+import UserPerformance from "./Client/features/workout/UserPerformance";
+import AdminPortal from "./Admin/components/AdminPortal";
 
 const App = () => {
 
@@ -32,7 +33,7 @@ const App = () => {
         <div className="flex-grow">
         <Routes>
           <Route path="/" element={<LandingPage />} />
-
+          <Route path="/admin/*" element={<AdminPortal/>}/>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/login" element={<LoginModal />} />
           <Route path="/register" element={<RegisterModal />} />
