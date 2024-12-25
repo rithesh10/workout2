@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import config from "../../../config/config";
 
 const UserPerformance = () => {
   const [user, setUser] = useState({});
@@ -23,7 +24,7 @@ const UserPerformance = () => {
   const fetchPerformance = async (userId) => {
     try {
       const response = await axios.get(
-        `http://localhost:4000/api/v1/user/workoutPerformance/${userId}`
+        `${config.backendUrl}/workoutPerformance/${userId}`
       );
       if (response && response.data) {
         setPerform(response.data.users[0].workouts);

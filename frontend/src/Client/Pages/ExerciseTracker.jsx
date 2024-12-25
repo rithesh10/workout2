@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Modal from "react-modal";
+import config from "../../config/config";
 
 const ExerciseTracker = () => {
   const [exerciseType, setExerciseType] = useState("");
@@ -22,7 +23,7 @@ const ExerciseTracker = () => {
 
   const startCamera = async () => {
     try {
-      const response = await fetch("http://localhost:8000/start_camera", {
+      const response = await fetch(`${config.flaskUrl}/start_camera`, {
         method: "POST",
       });
       const data = await response.json();
@@ -40,7 +41,7 @@ const ExerciseTracker = () => {
 
   const stopCamera = async () => {
     try {
-      const response = await fetch("http://localhost:8000/stop_camera", {
+      const response = await fetch(`${config.flaskUrl}/stop_camera`, {
         method: "POST",
       });
       const data = await response.json();
@@ -60,7 +61,7 @@ const ExerciseTracker = () => {
 
   const resetCounter = async () => {
     try {
-      const response = await fetch("http://localhost:8000/reset_counter", {
+      const response = await fetch(`${config.flaskUrl}/reset_counter`, {
         method: "POST",
       });
       const data = await response.json();
@@ -77,7 +78,7 @@ const ExerciseTracker = () => {
 
   const selectExercise = (type) => {
     setExerciseType(routes[type]);
-    setVideoStreamUrl(`http://localhost:8000/${type}`);
+    setVideoStreamUrl(`${config.flaskUrl}/${type}`);
     setIsModalOpen(false);
   };
 
