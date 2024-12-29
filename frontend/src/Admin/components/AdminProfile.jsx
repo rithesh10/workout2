@@ -83,7 +83,7 @@ const AdminProfile = () => {
   };
 
   return (
-    <div className="p-6 bg-gray-100 rounded-lg shadow-md max-w-screen-sm mx-auto">
+    <div className="p-6 bg-gray-100 text-black rounded-lg shadow-md w-screen overflow-x-auto mx-auto">
       <h2 className="text-2xl font-semibold mb-4">Admin Profile</h2>
 
       {/* Admin Info Display */}
@@ -96,7 +96,7 @@ const AdminProfile = () => {
             onChange={(e) =>
               setAdminDetails({ ...adminDetails, fullName: e.target.value })
             }
-            className="w-full p-2 mt-2 border border-gray-300 rounded"
+            className="w-full p-2 mt-2 border bg-gray-300  border-gray-300 rounded-lg"
             disabled={!isEditing}
           />
         </div>
@@ -108,7 +108,7 @@ const AdminProfile = () => {
             onChange={(e) =>
               setAdminDetails({ ...adminDetails, email: e.target.value })
             }
-            className="w-full p-2 mt-2 border border-gray-300 rounded"
+            className="w-full p-2 mt-2 border bg-gray-300  border-gray-300 rounded-lg"
             disabled
           />
         </div>
@@ -162,7 +162,7 @@ const AdminProfile = () => {
                 type="password"
                 value={oldPassword}
                 onChange={(e) => setOldPassword(e.target.value)}
-                className="w-full p-2 mt-2 border border-gray-300 rounded"
+                className="w-full p-2 mt-2 border bg-gray-300  border-gray-300 rounded-lg"
                 required
               />
             </div>
@@ -172,7 +172,7 @@ const AdminProfile = () => {
                 type="password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full p-2 mt-2 border border-gray-300 rounded"
+                className="w-full p-2 mt-2 border bg-gray-300  border-gray-300 rounded-lg"
                 required
               />
             </div>
@@ -182,7 +182,7 @@ const AdminProfile = () => {
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full p-2 mt-2 border border-gray-300 rounded"
+                className="w-full p-2 mt-2 border bg-gray-300  border-gray-300 rounded-lg"
                 required
               />
             </div>

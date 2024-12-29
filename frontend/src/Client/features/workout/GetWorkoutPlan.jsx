@@ -4,9 +4,10 @@ import { Dumbbell, Menu, Search, User, Utensils, X } from 'lucide-react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 // import Spinner from '../../Client/components/Spinner';
-import Spinner from '../../components/Spinner';
+import Spinner from '../../../components/Spinner';
 import PerformanceModal from './Performance';
 import config from '../../../config/config';
+import NotFound from '../../../components/NotFound';
 
 
 // Context for search functionality
@@ -23,7 +24,7 @@ const SearchProvider = ({ children }) => {
 
   const fetchExercises = async () => {
     try {
-      const response = await axios.post(
+      const response = await axios.get(
         `${config.backendUrl}/get-exercises`,
         {},
         { withCredentials: true,
@@ -231,8 +232,8 @@ const handleOpen=(exercise)=>{
     fetchWorkoutPlan();
   }, []);
 
-  if (loading) return <></>;
-  if (!workoutPlan) return <p>Error: Could not load workout plan.</p>;
+  if (loading) return <NotFound/>;
+  if (!workoutPlan) return  <NotFound/>;
 
   return (
     <div className="flex justify-center w-screen items-center min-h-screen my-10 bg-black text-gray-200 p-6">

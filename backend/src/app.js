@@ -12,6 +12,7 @@ import performanceRouter from "./routes/performance.routes.js";
 import PerformanceModel from "./models/Performance.model.js";
 // import AdminLogin from "../../admin/src/components/AdminLogin.jsx";
 import AdminRouter from "./routes/Admin.routes.js";
+import { dailyRouter } from "./routes/DailyStats.routes.js";
 app.use(
   cors({
     origin: [
@@ -34,6 +35,7 @@ app.use("/api/v1/user", FoodRouter);
 app.use("/api/v1/user", weightLogRouter);
 app.use("/api/v1/user", performanceRouter);
 app.use("/api/v1/admin", AdminRouter);
+app.use("/api/v1/user",dailyRouter);
 
 
 

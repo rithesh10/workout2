@@ -17,7 +17,7 @@ import WorkoutPage from "./Client/features/workout/GetWorkoutPlan";
 import ExerciseDetail from "./Client/features/workout/Exercise";
 import GetDietPlan from "./Client/features/Diet/GetDietPlan";
 import PerformanceModal from "./Client/features/workout/Performance";
-import Footer from "./Client/components/Footer";
+import Footer from "./components/Footer";
 import ForgotPassword from "./Login/ForgotPassword";
 import UserPerformance from "./Client/features/workout/UserPerformance";
 import AdminPortal from "./Admin/components/AdminPortal";

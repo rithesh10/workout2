@@ -29,7 +29,7 @@ export default function WorkoutPlan() {
       setIsLoading(true);
 
       const response = await axios.post(
-        `${config.backendUrl}/generate`, // Replace with your backend URL
+        `${config.backendUrl}/generate-workout`, // Replace with your backend URL
         formData,
         { withCredentials: true,
           

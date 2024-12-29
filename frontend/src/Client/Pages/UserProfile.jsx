@@ -35,9 +35,8 @@ const UserProfile = () => {
   // Fetch user data from API
   const getUser = async () => {
     try {
-      const response = await axios.post(
-        `${config.backendUrl}/get-user`,
-        {}, // Empty payload
+      const response = await axios.get(
+        `${config.backendUrl}/get-user`, // Empty payload
         { withCredentials: true,
           headers: {
             "ngrok-skip-browser-warning": "true" // Add the ngrok-specific header
@@ -45,6 +44,8 @@ const UserProfile = () => {
          } // Ensure cookies are sent
       );
       setUser(response.data.data); // Update state with user data
+      console.log(response.data.data);
+      
     } catch (err) {
       console.error("Error fetching user:", err);
       setUserError("Error fetching user data.");
@@ -282,7 +283,7 @@ const UserProfile = () => {
                   <input
                     type="number"
                     name="age"
-                    value={workout.age || ''}
+                    value={workout.age || 0}
                     disabled={!isEditing}
                     className="mt-1 block w-full rounded-md bg-gray-800 border border-gray-600 px-3 py-2 text-white disabled:bg-gray-900"
                   />
@@ -297,7 +298,7 @@ const UserProfile = () => {
                     <input
                       type="text"
                       name="weight"
-                      value={workout.weight || ''}
+                      value={workout.weight || 0}
                       onChange={handleInfoChange}
                       disabled={!isEditing}
                       className="mt-1 block w-full rounded-md bg-gray-700 border border-gray-600 px-3 py-2 text-white focus:border-blue-500 focus:outline-none focus:ring-blue-500 disabled:bg-gray-800"

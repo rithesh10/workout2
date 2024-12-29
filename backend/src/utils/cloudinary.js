@@ -3,7 +3,7 @@ import { v2 as cloudinary } from "cloudinary";
 
 import { response } from "express";
 import fs from "fs";
-console.log(process.env.CLOUDINARY_CLOUD_NAME)
+// console.log(process.env.CLOUDINARY_CLOUD_NAME)
 cloudinary.config({ 
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
     api_key: process.env.CLOUDINARY_CLOUD_KEY, 

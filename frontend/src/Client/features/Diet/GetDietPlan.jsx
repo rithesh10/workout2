@@ -2,7 +2,8 @@ const url=import.meta.env.VITE_BACKEND_URL
 import { useState,useEffect } from "react";
 import axios from 'axios';
 import React from "react";
-import Spinner from "../../components/Spinner";
+import Spinner from "../../../components/Spinner";
+import NotFound from "../../../components/NotFound";
 const GetDietPlan = () => {
     const [dietPlan,setDietPlan] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -27,7 +28,7 @@ const GetDietPlan = () => {
     console.log(dietPlan);
   
     if (loading) return <Spinner/>;
-    if (!dietPlan) return <p>Error: Could not load workout plan.</p>;
+    if (!dietPlan) return <NotFound/>;
   
     return (
       <div className="flex justify-center w-screen items-center min-h-screen bg-black text-gray-200 p-6">

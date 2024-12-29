@@ -6,7 +6,8 @@ import {
   Users, 
   Dumbbell, 
   Calendar, 
-  LogOut 
+  LogOut, 
+  DumbbellIcon
 } from "lucide-react";
 import { FaUserShield } from 'react-icons/fa';
 import Dashboard from "../pages/Dashboard";
@@ -14,6 +15,8 @@ import UserManagement from "../pages/UserManagement";
 import WorkoutPlans from "../pages/WorkoutPlans";
 import ClassSchedule from "../pages/UserProfile";
 import AdminProfile from "./AdminProfile";
+import Exercises from "../pages/Exercises";
+import UpdateYTLink from "../pages/Exercises";
 
 const AdminPortal = () => {
   const navigate = useNavigate();
@@ -61,6 +64,11 @@ const AdminPortal = () => {
       to: "/admin/classes", 
       label: "Users Profile", 
       icon: <Calendar className="mr-2" size={20} /> 
+    },
+    {
+      to:"/admin/exercise",
+      label:"Exercises ",
+      icon:<DumbbellIcon className="mr-2" size={20}/>
     }
   ];
 
@@ -154,6 +162,7 @@ const AdminPortal = () => {
         <Route path="workouts" element={<WorkoutPlans />} />
         <Route path="classes" element={<ClassSchedule />} />
         <Route path="profile" element={<AdminProfile/>}/>
+        <Route path="exercise" element={<UpdateYTLink/>}/>
       </Routes>
     </div>
 

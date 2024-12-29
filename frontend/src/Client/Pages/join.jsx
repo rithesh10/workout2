@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import Navbar from './navbar'
 import Dashboard from './Dashboard'
-import Spinner from '../components/Spinner';
-import Footer from '../components/Footer';
+import Spinner from '../../components/Spinner';
+import Footer from '../../components/Footer';
 
 const Join = () => {
   const [loading,setloading]=useState(true);

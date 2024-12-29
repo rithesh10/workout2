@@ -8,7 +8,7 @@ UserRouter.route("/register").post(registerUser )
 UserRouter.route("/login").post(loginUser)
 UserRouter.route("/verify-login-otp").post(loginOtp)
 UserRouter.route("/change-password").post(verifyJWT,changePassword)
-UserRouter.route("/get-user").post(verifyJWT,getCurrentUser)
+UserRouter.route("/get-user").get(verifyJWT,getCurrentUser)
 UserRouter.route("/logout").post(verifyJWT,logout);
 UserRouter.route("/refresh-token").post(refreshAccessToken)
 UserRouter.route("/get-all-users").get(getAllUsers)

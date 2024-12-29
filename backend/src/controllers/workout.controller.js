@@ -11,7 +11,8 @@ const generateWorkoutPlan = asyncHandler(async (req, res) => {
   
   const { age, weight, height, FitnessGoal, FitnessLevel, message } = req.body;
   const userId = req.user._id;
-  console.log(req.user._id);
+  // console.log(req.user._id);
+
   const prompt = `
     Generate a 7-day workout plan for a user based on the following parameters:
 
@@ -74,7 +75,7 @@ const generateWorkoutPlan = asyncHandler(async (req, res) => {
 
   // await Workout.deleteMany({ user: userId });
 
-  console.log("Existing workout plans deleted for user:", userId);
+  // console.log("Existing workout plans deleted for user:", userId);
   // Create a new Workout document
   const newWorkoutPlan = new Workout({
     user: userId,

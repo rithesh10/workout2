@@ -8,7 +8,7 @@ import { Diet } from "../models/diet.model.js";
 const generateDietPlan = asyncHandler(async (req, res) => {
     const {  weight,monthlyBudget, height, FitnessGoal, FitnessLevel, message } = req.body;
     const userId=req.user._id;
-    console.log(req.user._id);
+    // console.log(req.user._id);
     const prompt = `
    Generate a diet plan for the below information below:
     1. User Information:
@@ -71,7 +71,7 @@ const generateDietPlan = asyncHandler(async (req, res) => {
     if (!answer) {
         throw new ApiError(400, "Unable to generate the workout plan");
     }
-    console.log("Full response from Gemini API:", answer);
+    // console.log("Full response from Gemini API:", answer);
     const jsonMatch = answer.match(/\{[\s\S]*\}/); 
 
     if (!jsonMatch) {
@@ -101,7 +101,7 @@ try {
     // Save the workout plan to the database
     await newDietPlan.save();
 
-    console.log("diet plan saved to database:", newDietPlan);
+    // console.log("diet plan saved to database:", newDietPlan);
 
     return res.status(200).json(new ApiSuccess(200, newDietPlan, "Generated and saved diet plan"));
 });

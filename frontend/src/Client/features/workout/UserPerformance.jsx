@@ -122,7 +122,7 @@ const UserPerformance = () => {
           ) : (
             <div className="text-center py-12">
               <p className="text-gray-600 text-lg">
-                No performance data available.
+              <NotFound/>
               </p>
             </div>
           )}

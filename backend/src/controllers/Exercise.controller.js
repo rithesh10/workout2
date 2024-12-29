@@ -5,7 +5,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiSuccess } from "../utils/ApiSuccess.js";
 
 async function ExerciseFunction(ex) {
-  console.log("Exercise data received:", ex);
+  // console.log("Exercise data received:", ex);
   let totalExercises = [];
 
   // Ensure 'ex' is an array, if not, just skip the function and return
@@ -76,7 +76,7 @@ async function ExerciseFunction(ex) {
       }
     }
 
-    console.log("All fetched exercise data:", allResults);
+    // console.log("All fetched exercise data:", allResults);
 
     // Error handling for database schema generation
     try {
@@ -100,7 +100,7 @@ async function generateExerciseSchema(DataOfExercises) {
         await Exercise.create(exercise);
       }
     }
-    console.log("Successfully added data to the database");
+    // console.log("Successfully added data to the database");
   } catch (error) {
     console.error("Error saving exercise data to the database:", error);
     throw new ApiError(500, "Failed to save exercise data to the database");
@@ -137,5 +137,23 @@ const getExerciseData=asyncHandler(async(req,res)=>{
 
 
 })
+const updateExerciseData=asyncHandler(async(req,res)=>{
+  try {
+      const id=req.params.id;
+      const ytLink=req.body;
+      console.log(ytLink);
+      
+      const exercise=await Exercise.findByIdAndUpdate(id,
+        ytLink
+      ,
+    {
+      new:true
+    })
+    return res.status(200).json(new ApiSuccess(200,exercise,"Successfully updated the exercise data"))
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json(new ApiError(500,"internal server error"))
+  }
+})
 
-export { ExerciseFunction ,getExerciseData};
+export { ExerciseFunction ,getExerciseData,updateExerciseData};
