@@ -18,9 +18,9 @@ import jwt from "jsonwebtoken";
 
 const options = {
   httpOnly: true,
-  secure: false, // In development, no HTTPS
-  sameSite: 'Lax', // Allows same-site requests, suitable for development
-  path: '/', // Ensure this matches how the cookie was originally set
+  secure: true, // Only true in production
+  sameSite: "None", // Required for cross-origin cookies
+  path: "/", 
 };
 
 let otpStore = {};

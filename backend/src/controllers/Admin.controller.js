@@ -6,7 +6,7 @@ import jwt from "jsonwebtoken";
 const options = {
   httpOnly: true,
   secure: false, // In development, no HTTPS
-  sameSite: "lax", // Allows same-site requests, suitable for development
+  sameSite: "None", // Allows same-site requests, suitable for development
   path: "/", // Ensure this matches how the cookie was originally set
 };
 

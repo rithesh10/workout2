@@ -1,0 +1,22 @@
+[1mdiff --git a/frontend/src/Client/features/workout/Workoutplan.jsx b/frontend/src/Client/features/workout/Workoutplan.jsx[m
+[1mindex d6fa670..2c09dde 100644[m
+[1m--- a/frontend/src/Client/features/workout/Workoutplan.jsx[m
+[1m+++ b/frontend/src/Client/features/workout/Workoutplan.jsx[m
+[36m@@ -29,7 +29,7 @@[m [mexport default function WorkoutPlan() {[m
+       setIsLoading(true);[m
+ [m
+       const response = await axios.post([m
+[31m-        `${config.backendUrl}/generate-workout`, // Replace with your backend URL[m
+[32m+[m[32m        `${config.backendUrl}/generate`, // Replace with your backend URL[m
+         formData,[m
+         { withCredentials: true,[m
+           [m
+[36m@@ -129,7 +129,7 @@[m [mexport default function WorkoutPlan() {[m
+               value={formData.message}[m
+               onChange={handleChange}[m
+               className="w-full px-4 py-2 border bg-gray-700 rounded-md focus:ring-indigo-500 focus:border-indigo-500"[m
+[31m-              placeholder="Request specifics, e.g., a balanced diet"[m
+[32m+[m[32m              placeholder="Request specifics, e.g., a workout plan"[m
+               required[m
+             />[m
+           </div>[m

@@ -29,7 +29,7 @@ export default function WorkoutPlan() {
       setIsLoading(true);
 
       const response = await axios.post(
-        `${config.backendUrl}/generate-workout`, // Replace with your backend URL
+        `${config.backendUrl}/generate`, // Replace with your backend URL
         formData,
         { withCredentials: true,
           
@@ -129,7 +129,7 @@ export default function WorkoutPlan() {
               value={formData.message}
               onChange={handleChange}
               className="w-full px-4 py-2 border bg-gray-700 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-              placeholder="Request specifics, e.g., a balanced diet"
+              placeholder="Request specifics, e.g., a workout plan"
               required
             />
           </div>
