@@ -163,12 +163,134 @@ const registerUser = asyncHandler(async (req, res) => {
 //     )
 //     ;
 // });
+// const loginUser = asyncHandler(async (req, res) => {
+//   const { email, password } = req.body;
+
+//   // Validate input
+//   if (!email || !password) {
+//     throw new ApiError(400, "Email and password are required");
+//   }
+
+//   // Find the user by email
+//   const user = await User.findOne({ email });
+//   if (!user) {
+//     throw new ApiError(404, "User not found");
+//   }
+
+//   // Check if the password is correct
+//   const isPasswordCorrect = await user.isPassword(password);
+//   if (!isPasswordCorrect) {
+//     throw new ApiError(401, "Password mismatched");
+//   }
+
+//   // Generate a 6-digit OTP
+//   const otp = Math.floor(100000 + Math.random() * 900000);
+
+//   // Store OTP temporarily with expiration time (5 minutes expiry)
+//   otpStore[email] = { otp, expiresAt: Date.now() + 5 * 60 * 1000 };
+
+//   // Generate a temporary token containing the email
+//   const tempToken = jwt.sign({ email }, process.env.ACCESS_TOKEN_SECRET, {
+//     expiresIn: "5m", // Token valid for 5 minutes
+//   });
+
+//   // Send OTP to the user's email
+//   const mailOptions = {
+//     from: "saimadhav9235@gmail.com",
+//     to: email,
+//     subject: "Your Login OTP",
+//     text: `Your OTP code is ${otp}. It will expire in 5 minutes.`,
+//   };
+
+//   transporter.sendMail(mailOptions, (error, info) => {
+//     if (error) {
+//       console.error("Error sending OTP email:", error);
+//       throw new ApiError(500, "Error sending OTP email");
+//     }
+//   });
+
+//   res.status(200).json({
+//     message: "OTP sent to email. Use the provided token to verify OTP.",
+//     token: tempToken,
+//   });
+// });
+
+// const loginOtp = asyncHandler(async (req, res) => {
+//   const { otp } = req.body;
+  
+  
+  
+//   const token = req.headers.authorization?.split(" ")[1];  // Extract token from Authorization header
+
+//   if (!token) {
+//     throw new ApiError(400, "Token is required");
+//   }
+
+//   // Verify the token (using JWT)
+//   let decoded;
+//   try {
+//     decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+//   } catch (err) {
+//     throw new ApiError(401, "Invalid or expired token");
+//   }
+
+//   const email = decoded.email;  // Get email from token payload
+//   console.log(email);
+  
+//   console.log("My opt",otp);
+//   console.log("Ser",otpStore[email]);
+
+//   // Check if OTP exists for this email and if it's valid
+//   if (!otpStore[email]) {
+//     throw new ApiError(400, "OTP not generated or has been cleared");
+//   }
+
+//   if (String(otpStore[email].otp) !== String(otp)) {
+//     throw new ApiError(400, "Invalid OTP");
+//   }
+
+//   // Check if OTP has expired
+//   const currentTime = Date.now();
+//   if (currentTime > otpStore[email].expiresAt) {
+//     delete otpStore[email]; // Clean up expired OTP
+//     throw new ApiError(400, "OTP has expired");
+//   }
+
+//   // OTP is valid; remove it from the store after successful validation
+//   delete otpStore[email];
+
+//   // Find the user by email
+//   const user = await User.findOne({ email });
+//   if (!user) {
+//     throw new ApiError(404, "User not found");
+//   }
+
+//   // Generate access and refresh tokens
+//   const tokens = await generateAccessAndRefreshToken(user._id);
+//   if (!tokens) {
+//     throw new ApiError(500, "Failed to generate tokens");
+//   }
+
+//   const { accessToken, refreshToken } = tokens;
+
+//   // Return the response with cookies and the tokens
+//   res
+//     .status(200)
+//     .cookie("accessToken", accessToken, options)
+//     .cookie("refreshToken", refreshToken, options)
+//     .json(
+//       new ApiSuccess(200, { user, accessToken, refreshToken }, "Login successful")
+//     );
+// });
+
+
 const loginUser = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, fullName } = req.body;
+  // console.log(email, password);
 
   // Validate input
-  if (!email || !password) {
-    throw new ApiError(400, "Email and password are required");
+  if (!email) {
+    throw new ApiError(400, "Email is required");
   }
 
   // Find the user by email
@@ -180,111 +302,44 @@ const loginUser = asyncHandler(async (req, res) => {
   // Check if the password is correct
   const isPasswordCorrect = await user.isPassword(password);
   if (!isPasswordCorrect) {
-    throw new ApiError(401, "Password mismatched");
+    throw new ApiError(401, "Password mismatched"); // Use 401 for unauthorized access
   }
-
-  // Generate a 6-digit OTP
-  const otp = Math.floor(100000 + Math.random() * 900000);
-
-  // Store OTP temporarily with expiration time (5 minutes expiry)
-  otpStore[email] = { otp, expiresAt: Date.now() + 5 * 60 * 1000 };
-
-  // Generate a temporary token containing the email
-  const tempToken = jwt.sign({ email }, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: "5m", // Token valid for 5 minutes
-  });
-
-  // Send OTP to the user's email
-  const mailOptions = {
-    from: "saimadhav9235@gmail.com",
-    to: email,
-    subject: "Your Login OTP",
-    text: `Your OTP code is ${otp}. It will expire in 5 minutes.`,
-  };
-
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      console.error("Error sending OTP email:", error);
-      throw new ApiError(500, "Error sending OTP email");
-    }
-  });
-
-  res.status(200).json({
-    message: "OTP sent to email. Use the provided token to verify OTP.",
-    token: tempToken,
-  });
-});
-
-const loginOtp = asyncHandler(async (req, res) => {
-  const { otp } = req.body;
-  
-  
-  
-  const token = req.headers.authorization?.split(" ")[1];  // Extract token from Authorization header
-
-  if (!token) {
-    throw new ApiError(400, "Token is required");
-  }
-
-  // Verify the token (using JWT)
-  let decoded;
-  try {
-    decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-  } catch (err) {
-    throw new ApiError(401, "Invalid or expired token");
-  }
-
-  const email = decoded.email;  // Get email from token payload
-  console.log(email);
-  
-  console.log("My opt",otp);
-  console.log("Ser",otpStore[email]);
-
-  // Check if OTP exists for this email and if it's valid
-  if (!otpStore[email]) {
-    throw new ApiError(400, "OTP not generated or has been cleared");
-  }
-
-  if (String(otpStore[email].otp) !== String(otp)) {
-    throw new ApiError(400, "Invalid OTP");
-  }
-
-  // Check if OTP has expired
-  const currentTime = Date.now();
-  if (currentTime > otpStore[email].expiresAt) {
-    delete otpStore[email]; // Clean up expired OTP
-    throw new ApiError(400, "OTP has expired");
-  }
-
-  // OTP is valid; remove it from the store after successful validation
-  delete otpStore[email];
-
-  // Find the user by email
-  const user = await User.findOne({ email });
-  if (!user) {
-    throw new ApiError(404, "User not found");
-  }
-
+  // console.log(user,isPasswordCorrect)
   // Generate access and refresh tokens
   const tokens = await generateAccessAndRefreshToken(user._id);
+  // console.log("Tokens returned from generateAccessAndRefreshToken:", tokens); // Log tokens
+
+  // Check if tokens are correctly returned
   if (!tokens) {
     throw new ApiError(500, "Failed to generate tokens");
   }
 
   const { accessToken, refreshToken } = tokens;
 
-  // Return the response with cookies and the tokens
-  res
-    .status(200)
+  // console.log(data)
+
+  // Fetch the logged-in user excluding sensitive fields
+  const loggedInUser = await User.findById(user._id).select(
+    "-password -refreshToken",
+  );
+
+  // Set cookies and send response
+  return res
+    .status(200) // Corrected from `res(200)`
     .cookie("accessToken", accessToken, options)
     .cookie("refreshToken", refreshToken, options)
     .json(
-      new ApiSuccess(200, { user, accessToken, refreshToken }, "Login successful")
+      new ApiSuccess(
+        200,
+        {
+          user: loggedInUser,
+          accessToken,
+          refreshToken,
+        },
+        "user logged in successfully",
+      ),
     );
 });
-
-
-
 
 
 const logout = asyncHandler(async (req, res) => {
@@ -588,8 +643,8 @@ export {
   getAllUsers,
   forgotPassword,
   updateUserByAdmin,
-  verifyOtp,
+  
   resetPassword,
-  loginOtp
+  
   // updateProfilePic,
 };
