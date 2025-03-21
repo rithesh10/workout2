@@ -36,7 +36,9 @@ app.use("/api/v1/user", weightLogRouter);
 app.use("/api/v1/user", performanceRouter);
 app.use("/api/v1/admin", AdminRouter);
 app.use("/api/v1/user",dailyRouter);
-
+app.get("/",(req,res)=>{
+  res.send("Hello");
+})
 
 
 // app.get('/perform/:id',async(req,res)=>{
