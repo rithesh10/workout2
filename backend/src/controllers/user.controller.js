@@ -17,9 +17,9 @@ import jwt from "jsonwebtoken";
 
 
 const options = {
-  httpOnly: true,
-  // secure: true, // Only true in production
- // sameSite: "None", // Required for cross-origin cookies
+  httpOnly: false,
+  secure: true, // Only true in production
+ sameSite: "None", // Required for cross-origin cookies
   path: "/", 
 };
 
