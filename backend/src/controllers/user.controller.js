@@ -23,7 +23,7 @@ const options = {
   sameSite: 'None', // Essential for cross-site cookies
   path: '/',
   // Add your parent domain here
-  domain: 'https://workout2-korh.onrender.com', // e.g., 'my-app.com'
+  domain: 'workout2-korh.onrender.com', // e.g., 'my-app.com'
 };
 
 
