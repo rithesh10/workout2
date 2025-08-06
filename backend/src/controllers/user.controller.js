@@ -18,9 +18,12 @@ import jwt from "jsonwebtoken";
 
 const options = {
   httpOnly: true,
-  secure: true,         // Required over HTTPS
-  sameSite: "None",     // Allows cross-origin requests (required!)
-  path: "/",            // Make cookie available to all routes
+  // Set 'secure' to true only in production (when using HTTPS)
+  secure: true, 
+  sameSite: 'None', // Essential for cross-site cookies
+  path: '/',
+  // Add your parent domain here
+  domain: 'https://workout2-korh.onrender.com', // e.g., 'my-app.com'
 };
 
 
