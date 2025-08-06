@@ -16,12 +16,12 @@ import jwt from "jsonwebtoken";
 // };
 
 
-res.cookie("token", token, {
+const options = {
   httpOnly: true,
-  secure: true,           // Must be true on HTTPS
-  sameSite: "None",       // Required for cross-origin
-  path: "/",
-});
+  secure: true,         // Required over HTTPS
+  sameSite: "None",     // Allows cross-origin requests (required!)
+  path: "/",            // Make cookie available to all routes
+};
 
 
 let otpStore = {};
