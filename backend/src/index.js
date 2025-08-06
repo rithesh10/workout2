@@ -9,7 +9,7 @@ dotenv.config({
 })
 startCronJobs();
 connectDB().then(()=>{
-    app.listen(process.env.PORT||4000,console.log(`Server is running on ${process.env.PORT}`))
+    app.listen(process.env.PORT||4000,'0.0.0.0',console.log(`Server is running on ${process.env.PORT}`))
 }).catch((err)=>{
     console.log("MONGODB error",err);
 });

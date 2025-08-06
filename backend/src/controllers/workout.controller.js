@@ -20,6 +20,9 @@ const generateWorkoutPlan = asyncHandler(async (req, res) => {
        - Age: ${age}
        - Weight: ${weight} kg
        - Height: ${height} cm
+
+
+       
        - Gender: ${req.user.gender}
        - Fitness Goal: ${FitnessGoal}
        - Fitness Level:${FitnessLevel}
