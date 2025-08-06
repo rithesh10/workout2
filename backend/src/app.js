@@ -16,8 +16,9 @@ import { dailyRouter } from "./routes/DailyStats.routes.js";
 app.use(
   cors({
     origin: [
-      // "http://localhost:5174",
+      " http://192.168.191.94:8091",
       "http://192.168.1.14:5173",
+      "*"
       // "https://e500-2401-4900-658d-9d18-b1d0-7a95-eea9-b83.ngrok-free.app",
       // "*"
     ],
